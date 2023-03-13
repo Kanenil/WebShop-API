@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using ExamWebShop.Data.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
+using ExamWebShop.Data.Entities;
 
 namespace ExamWebShop.Data
 {
@@ -10,6 +11,7 @@ namespace ExamWebShop.Data
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public AppEFContext(DbContextOptions<AppEFContext> options) : base(options) { }
+        public DbSet<CategoryEntity> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

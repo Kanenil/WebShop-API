@@ -25,7 +25,8 @@ namespace ExamWebShop.Services
             var roles = await _userManager.GetRolesAsync(user);
             List<Claim> claims = new()
             {
-                new Claim("name", user.UserName),
+                new Claim("email", user.Email),
+                new Claim("name", $"{user.FirstName} {user.LastName}"),
                 new Claim("image", user.Image ?? string.Empty)
             };
 

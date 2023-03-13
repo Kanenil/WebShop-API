@@ -1,4 +1,5 @@
 ﻿using ExamWebShop.Constants;
+using ExamWebShop.Data.Entities;
 using ExamWebShop.Data.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,33 @@ namespace ExamWebShop.Data
                             .AddToRoleAsync(user, Roles.Admin)
                             .Result;
                     }
+                }
+
+                if(!context.Categories.Any())
+                {
+                    CategoryEntity cat1 = new()
+                    {
+                        Name = "Ноутбуки"
+                    };
+                    CategoryEntity cat2 = new()
+                    {
+                        Name = "Монітори"
+                    };
+                    CategoryEntity cat3 = new()
+                    {
+                        Name = "Планшети"
+                    };
+                    CategoryEntity cat4 = new()
+                    {
+                        Name = "Комп'ютери"
+                    };
+                    CategoryEntity cat5 = new()
+                    {
+                        Name = "Клавіатури та миші"
+                    };
+
+                    context.Categories.AddRange(cat1,cat2, cat3, cat4, cat5);
+                    context.SaveChanges();
                 }
             }
         }

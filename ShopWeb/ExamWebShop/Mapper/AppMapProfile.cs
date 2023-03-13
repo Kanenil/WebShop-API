@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using ExamWebShop.Data.Entities;
 using ExamWebShop.Data.Entities.Identity;
 using ExamWebShop.Models.Auth;
+using ExamWebShop.Models.Categories;
 
 namespace ExamWebShop.Mapper
 {
@@ -10,6 +12,8 @@ namespace ExamWebShop.Mapper
         {
             CreateMap<RegisterViewModel, UserEntity>()
                 .ForMember(x => x.UserName, dto => dto.MapFrom(x => x.Email));
+            CreateMap<CategoryEntity, CategoryItemViewModel>();
+            CreateMap<CategoryCreateViewModel, CategoryEntity>();
         }
     }
 }
