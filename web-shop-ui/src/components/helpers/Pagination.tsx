@@ -1,15 +1,8 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
 import { useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
-import { PaginationActionType } from './types';
-
-interface IPaginationInfo
-{
-    countItems: number;
-    currentPage: number;
-    countOnPage: number;
-    url: string;
-}
+import { setCurrentPage } from './PaginationReducer';
+import { IPaginationInfo } from './types';
 
 export const Pagination = ({ countItems, countOnPage, url, currentPage}: IPaginationInfo) => {
 
@@ -23,7 +16,7 @@ export const Pagination = ({ countItems, countOnPage, url, currentPage}: IPagina
     const prevParams = new URLSearchParams(location.search);
     const nextParams = new URLSearchParams(location.search);
   
-    const next = parseInt((currentPage).toString()) + 1;
+    const next = currentPage + 1;
 
     prevParams.set("page", (currentPage-1).toString());
     nextParams.set("page", next.toString());
@@ -31,8 +24,7 @@ export const Pagination = ({ countItems, countOnPage, url, currentPage}: IPagina
     const nextUrl = `${url}?${nextParams.toString()}`;
     
     const onPageChangeHandler = (page:number) => {
-      localStorage.setItem('currentPage', page.toString());
-      dispatch({type: PaginationActionType.CURRENT_PAGE_CHANGED}); 
+      dispatch(setCurrentPage(page)); 
     }
 
     const showed = ((currentPage - 1) * countOnPage) + 1;

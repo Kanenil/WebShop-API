@@ -1,39 +1,30 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import http from "../../../http";
-import { ICategoryItem, IPagination, PaginationActionType } from "./types";
+import { ICategoryItem } from "./types";
 import noimage from "../../../assets/no-image.webp";
 import { Link, useLocation } from "react-router-dom";
-import { Pagination } from "./Pagination";
 import { useDispatch, useSelector } from "react-redux";
 import { Fragment, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { IPagination } from "../../helpers/types";
+import { setCurrentPage } from "../../helpers/PaginationReducer";
+import { Pagination } from "../../helpers/Pagination";
+
+const countOnPage = 5;
 
 export const CategoriesListPage = () => {
   const [categories, setCategories] = useState<Array<ICategoryItem>>([]);
   const [deleteId, setDeleteId] = useState<number>(0);
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState<string>("");
 
-  const cancelButtonRef = useRef(null)
-
-  const dispatch = useDispatch();
-
-  const { currentPage, searchBy } = useSelector(
+  const { currentPage } = useSelector(
     (store: any) => store.pagination as IPagination
   );
 
-  const deleteHandler = () => {
-    http.delete('/api/categories/' + deleteId).then(resp => {
-      http.get("/api/categories").then((resp) => {
-        setCategories(resp.data);
-      });
-    });
-  }
-
-  const [search, setSearch] = useState<string>(searchBy ? searchBy : "");
-
-  const countOnPage = 5;
-
+  const cancelButtonRef = useRef(null)
+  const dispatch = useDispatch();
   const location = useLocation();
 
   useEffect(() => {
@@ -43,35 +34,37 @@ export const CategoriesListPage = () => {
 
     const searchParams = new URLSearchParams(location.search);
     const page = searchParams.get("page");
-    const pageInt = page ? parseInt(page) : 0;
+    const pageInt = page ? parseInt(page) : 1;
 
     if (pageInt != currentPage) {
-      localStorage.setItem(
-        "currentPage",
-        pageInt != 0 ? pageInt.toString() : "1"
-      );
-      dispatch({ type: PaginationActionType.CURRENT_PAGE_CHANGED });
+      dispatch(setCurrentPage(pageInt));
     }
   }, []);
 
-  const OnSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-    localStorage.setItem("searchBy", e.target.value);
-    dispatch({ type: PaginationActionType.SEARCH_CHANGED });
+  const deleteHandler = () => {
+    http.delete('/api/categories/' + deleteId).then(resp => {
+      http.get("/api/categories").then((resp) => {
+        setCategories(resp.data);
+      });
+    });
   };
 
+  const OnSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    dispatch(setCurrentPage(1));
+  };
 
   let itemsCount: number = 0;
 
   const content = categories
     .filter((item) => {
-      if (searchBy == "") {
+      if (search == "") {
         itemsCount++;
         return item;
       }
       if (
-        searchBy &&
-        (item.name.includes(searchBy) || item.id.toString() === searchBy)
+        search &&
+        (item.name.includes(search) || item.id.toString() === search)
       ) {
         itemsCount++;
         return item;
@@ -174,7 +167,7 @@ export const CategoriesListPage = () => {
                     onClick={() => setOpen(false)}
                     ref={cancelButtonRef}
                   >
-                    Відмінити
+                    Скасувати
                   </button>
                 </div>
               </Dialog.Panel>
