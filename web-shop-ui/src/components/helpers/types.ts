@@ -12,4 +12,5 @@ export interface IPaginationInfo
     currentPage: number;
     countOnPage: number;
     url: string;
+    onPageChange: (id: number) => void;
 }

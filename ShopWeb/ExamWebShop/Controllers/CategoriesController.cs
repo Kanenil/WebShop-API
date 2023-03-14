@@ -2,9 +2,11 @@
 using ExamWebShop.Constants;
 using ExamWebShop.Data;
 using ExamWebShop.Data.Entities;
+using ExamWebShop.Models;
 using ExamWebShop.Models.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 
 namespace ExamWebShop.Controllers
 {
@@ -16,6 +18,7 @@ namespace ExamWebShop.Controllers
         private readonly AppEFContext _context;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private const int MaxOnPage = 10;
 
         public CategoriesController(AppEFContext context, IMapper mapper, IConfiguration configuration)
         {
@@ -25,22 +28,34 @@ namespace ExamWebShop.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetList()
+        public IActionResult GetList(int page, string search)
         {
+            int.TryParse(search, out int number);
             var list = _context.Categories
-                .Where(x => !x.IsDeleted)
+                .Where(x => !x.IsDeleted && search != null ? (x.Name.Contains(search) || x.Id == number) : true)
+                .Skip((page - 1) * MaxOnPage)
+                .Take(MaxOnPage)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
                 .ToList();
             return Ok(list);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("/id/{id}")]
         public IActionResult GetCategory(int id)
         {
             var model = _context.Categories.SingleOrDefault(x => x.Id == id);
             if (model == null)
                 return NotFound();
             return Ok(_mapper.Map<CategoryItemViewModel>(model));
+        }
+        [HttpGet("count")]
+        public IActionResult GetCount(string search)
+        {
+            int.TryParse(search, out int number);
+            var count = _context.Categories
+                .Where(x => !x.IsDeleted && search != null ? (x.Name.Contains(search) || x.Id == number) : true)
+                .Count();
+            return Ok(count);
         }
 
         [HttpPost]
