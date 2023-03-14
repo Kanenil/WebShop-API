@@ -6,6 +6,7 @@ using ExamWebShop.Models;
 using ExamWebShop.Models.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Drawing.Printing;
 
 namespace ExamWebShop.Controllers
@@ -32,7 +33,7 @@ namespace ExamWebShop.Controllers
         {
             int.TryParse(search, out int number);
             var list = _context.Categories
-                .Where(x => !x.IsDeleted && search != null ? (x.Name.Contains(search) || x.Id == number) : true)
+                .Where(x => !x.IsDeleted && search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true)
                 .Skip((page - 1) * MaxOnPage)
                 .Take(MaxOnPage)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
@@ -40,7 +41,7 @@ namespace ExamWebShop.Controllers
             return Ok(list);
         }
 
-        [HttpGet("/id/{id}")]
+        [HttpGet("id/{id}")]
         public IActionResult GetCategory(int id)
         {
             var model = _context.Categories.SingleOrDefault(x => x.Id == id);
@@ -53,7 +54,7 @@ namespace ExamWebShop.Controllers
         {
             int.TryParse(search, out int number);
             var count = _context.Categories
-                .Where(x => !x.IsDeleted && search != null ? (x.Name.Contains(search) || x.Id == number) : true)
+                .Where(x => !x.IsDeleted && search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true)
                 .Count();
             return Ok(count);
         }
@@ -92,7 +93,7 @@ namespace ExamWebShop.Controllers
             if (!String.IsNullOrEmpty(data.Image))
                 DeleteAllImages(data.Image);
 
-            data.IsDeleted = true;
+            _context.Categories.Remove(data);
             await _context.SaveChangesAsync();
 
             return Ok();

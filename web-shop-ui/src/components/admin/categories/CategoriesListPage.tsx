@@ -10,8 +10,13 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import { IPagination } from "../../helpers/types";
 import { setCurrentPage } from "../../helpers/PaginationReducer";
 import { Pagination } from "../../helpers/Pagination";
+import { APP_ENV } from "../../../env";
 
 const countOnPage = 10;
+
+function validateURL(url: string) {
+     return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(url);
+  }
 
 export const CategoriesListPage = () => {
   const [categories, setCategories] = useState<Array<ICategoryItem>>([]);
@@ -41,8 +46,7 @@ export const CategoriesListPage = () => {
       setCategories(resp.data);
     });
 
-    if(pageInt !== currentPage)
-      dispatch(setCurrentPage(pageInt));
+    if (pageInt !== currentPage) dispatch(setCurrentPage(pageInt));
   }, []);
 
   const pageChanged = (page: number, search: string | null = null) => {
@@ -63,9 +67,7 @@ export const CategoriesListPage = () => {
 
   const deleteHandler = () => {
     http.delete("/api/categories/" + deleteId).then((resp) => {
-      http.get("/api/categories").then((resp) => {
-        setCategories(resp.data);
-      });
+      pageChanged(currentPage);
     });
   };
 
@@ -95,7 +97,7 @@ export const CategoriesListPage = () => {
         <div className="flex-shrink-0 h-10 w-10">
           <img
             className="h-10 w-10 rounded-full"
-            src={item.image ? item.image : noimage}
+            src={item.image ? validateURL(item.image)?item.image:`${APP_ENV.IMAGE_PATH}100x100_${item.image}` : noimage}
           />
         </div>
       </td>

@@ -10,6 +10,8 @@ import { Logout } from "./components/auth/Logout";
 import Error404 from "./components/error";
 import AdminNavbar from "./components/containers/Layout/AdminNavbar";
 import { CategoriesListPage } from "./components/admin/categories/CategoriesListPage";
+import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
+import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
 
 function App() {
   return (
@@ -30,7 +32,13 @@ function App() {
             <Route path="*" element={<Error404 />} />
           </Route>
           <Route path="/control-panel" element={<AdminNavbar />}>
-          <Route path="categories" element={<CategoriesListPage />} />
+            <Route path="categories" >
+              <Route index element={<CategoriesListPage />}/>
+              <Route path="create" element={<CreateCategoryPage />}/>
+              <Route path="edit" >
+                <Route path=":id" element={<EditCategoryPage />}/>
+              </Route>
+            </Route>
             <Route path="*" element={<Error404 />} />
           </Route>
         </Routes>
