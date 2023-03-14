@@ -1,42 +1,49 @@
-import { Fragment } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Fragment, useEffect } from "react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import logo from "../../../logo.svg";
-import { IAuthUser } from '../../auth/types';
-import { useSelector } from 'react-redux';
+import { IAuthUser } from "../../auth/types";
+import { useSelector } from "react-redux";
 import usericon from "../../../assets/user.jpg";
 
 const navigation = [
-  { name: 'Головна', href: '/control-panel', current: false },
-  { name: 'Категорії', href: '/control-panel/categories', current: false },
-  { name: 'Продукти', href: '/control-panel/products', current: false },
-  { name: 'Користувачі', href: '/control-panel/users', current: false },
-  { name: 'Замовлення', href: '/control-panel/orders', current: false },
-]
+  { name: "Головна", href: "/control-panel", current: false },
+  { name: "Категорії", href: "/control-panel/categories", current: false },
+  { name: "Продукти", href: "/control-panel/products", current: false },
+  { name: "Користувачі", href: "/control-panel/users", current: false },
+  { name: "Замовлення", href: "/control-panel/orders", current: false },
+];
 const userNavigation = [
-  { name: 'Повернутись на головну', href: '/' },
-  { name: 'Вийти', href: '/auth/logout' },
-]
+  { name: "Повернутись на головну", href: "/" },
+  { name: "Вийти", href: "/auth/logout" },
+];
 
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function AdminNavbar() {
   const url = useLocation();
+  const navigator = useNavigate();
 
-  navigation.forEach(item => {
-    if(item.href == url.pathname)
-      item.current = true;
+  navigation.forEach((item) => {
+    if (item.href == url.pathname) item.current = true;
+    else {
+      item.current = false;
+    }
   });
-  
 
-  const user = useSelector(
-    (store: any) => store.auth as IAuthUser
-  );
-  
+  const user = useSelector((store: any) => store.auth as IAuthUser);
 
+  useEffect(() => {
+    if (!user.roles.toLocaleLowerCase().includes("admin")) navigator("/*");
+  }, []);
 
   return (
     <>
@@ -48,11 +55,7 @@ export default function AdminNavbar() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img
-                        className="h-8 w-8"
-                        src={logo}
-                        alt="Your Company"
-                      />
+                      <img className="h-8 w-8" src={logo} alt="Your Company" />
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
@@ -62,9 +65,9 @@ export default function AdminNavbar() {
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? 'bg-gray-900 text-white'
-                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                              'rounded-md px-3 py-2 text-sm font-medium'
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                           >
                             {item.name}
@@ -87,7 +90,11 @@ export default function AdminNavbar() {
                         <div>
                           <Menu.Button className="flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                             <span className="sr-only">Open user menu</span>
-                            <img className="h-8 w-8 rounded-full" src={user.image?user.image:usericon} alt="" />
+                            <img
+                              className="h-8 w-8 rounded-full"
+                              src={user.image ? user.image : usericon}
+                              alt=""
+                            />
                           </Menu.Button>
                         </div>
                         <Transition
@@ -106,8 +113,8 @@ export default function AdminNavbar() {
                                   <NavLink
                                     to={item.href}
                                     className={classNames(
-                                      active ? 'bg-gray-100' : '',
-                                      'block px-4 py-2 text-sm text-gray-700'
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700"
                                     )}
                                   >
                                     {item.name}
@@ -125,9 +132,15 @@ export default function AdminNavbar() {
                     <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                       <span className="sr-only">Open main menu</span>
                       {open ? (
-                        <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                        <XMarkIcon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                        <Bars3Icon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
                       )}
                     </Disclosure.Button>
                   </div>
@@ -142,10 +155,12 @@ export default function AdminNavbar() {
                       as="a"
                       href={item.href}
                       className={classNames(
-                        item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                        'block rounded-md px-3 py-2 text-base font-medium'
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block rounded-md px-3 py-2 text-base font-medium"
                       )}
-                      aria-current={item.current ? 'page' : undefined}
+                      aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
                     </Disclosure.Button>
@@ -154,11 +169,19 @@ export default function AdminNavbar() {
                 <div className="border-t border-gray-700 pt-4 pb-3">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
-                      <img className="h-10 w-10 rounded-full" src={user.image?user.image:usericon} alt="" />
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={user.image ? user.image : usericon}
+                        alt=""
+                      />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{user.name}</div>
-                      <div className="text-sm font-medium leading-none text-gray-400">{user.email}</div>
+                      <div className="text-base font-medium leading-none text-white">
+                        {user.name}
+                      </div>
+                      <div className="text-sm font-medium leading-none text-gray-400">
+                        {user.email}
+                      </div>
                     </div>
                     <button
                       type="button"
@@ -188,13 +211,17 @@ export default function AdminNavbar() {
 
         <header className="bg-white shadow">
           <div className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">Панель Керування</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Панель Керування
+            </h1>
           </div>
         </header>
         <main>
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8"><Outlet/></div>
+          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+            <Outlet />
+          </div>
         </main>
       </div>
     </>
-  )
+  );
 }

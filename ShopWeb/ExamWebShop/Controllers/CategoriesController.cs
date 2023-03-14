@@ -2,12 +2,9 @@
 using ExamWebShop.Constants;
 using ExamWebShop.Data;
 using ExamWebShop.Data.Entities;
-using ExamWebShop.Helpers;
 using ExamWebShop.Models.Categories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Imaging;
 
 namespace ExamWebShop.Controllers
 {
@@ -31,6 +28,7 @@ namespace ExamWebShop.Controllers
         public IActionResult GetList()
         {
             var list = _context.Categories
+                .Where(x => !x.IsDeleted)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
                 .ToList();
             return Ok(list);
@@ -79,7 +77,7 @@ namespace ExamWebShop.Controllers
             if (!String.IsNullOrEmpty(data.Image))
                 DeleteAllImages(data.Image);
 
-            _context.Categories.Remove(data);
+            data.IsDeleted = true;
             await _context.SaveChangesAsync();
 
             return Ok();

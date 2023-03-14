@@ -11,7 +11,7 @@ import { IPagination } from "../../helpers/types";
 import { setCurrentPage } from "../../helpers/PaginationReducer";
 import { Pagination } from "../../helpers/Pagination";
 
-const countOnPage = 5;
+const countOnPage = 10;
 
 export const CategoriesListPage = () => {
   const [categories, setCategories] = useState<Array<ICategoryItem>>([]);
@@ -72,6 +72,7 @@ export const CategoriesListPage = () => {
     })
     .slice((currentPage - 1) * countOnPage) //Skip
     .slice(0, countOnPage) //Take
+    .sort((a,b) => a.id - b.id) //Sort
     .map((item) => (
       <tr key={item.id}>
         <td className="px-6 py-4 whitespace-nowrap">
@@ -95,13 +96,13 @@ export const CategoriesListPage = () => {
         <td className="px-6 py-4 whitespace-nowrap">
           <Link
             to={"edit/" + item.id}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+            className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2"
           >
-            Edit
+            Редагувати
           </Link>
           <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={()=>{setDeleteId(item.id);
            setOpen(true);}}>
-            Delete
+            Видалити
           </button>
         </td>
       </tr>
@@ -177,9 +178,9 @@ export const CategoriesListPage = () => {
       </Dialog>
     </Transition.Root>
       <div className="flex justify-between items-center py-4 px-6 bg-gray-100">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+        <Link to="create" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
           Додати
-        </button>
+        </Link>
         <div className="flex items-center">
           <input
             onChange={OnSearchHandler}
