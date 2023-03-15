@@ -26,16 +26,7 @@ namespace ExamWebShop.Controllers
             if (image == null || image.Length == 0)
                 return BadRequest("No image file was uploaded.");
 
-            var bmp = ImageWorker.IFormFileToBitmap(image);
-            var fileName = Path.GetRandomFileName() + ".jpg";
-            string[] imageSizes = ((string)_configuration.GetValue<string>("ImageSizes")).Split(" ");
-            foreach (var imageSize in imageSizes)
-            {
-                int size = int.Parse(imageSize);
-                string dirSaveImage = Path.Combine(Directory.GetCurrentDirectory(), "images", $"{size}x{size}_{fileName}");
-                var saveImage = ImageWorker.CompressImage(bmp, size, size);
-                saveImage.Save(dirSaveImage, ImageFormat.Jpeg);
-            }
+            var fileName = ImageWorker.SaveImage(image, _configuration);
 
             return Ok(new UploadImageViewModel() { Image = fileName });
         }

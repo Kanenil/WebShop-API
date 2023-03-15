@@ -43,6 +43,17 @@ namespace ExamWebShop.Controllers
             return Ok(list);
         }
 
+        [HttpGet("selector")]
+        public IActionResult GetSelector()
+        {
+            var list = _context.Categories
+                .Where(x => !x.IsDeleted)
+                .OrderBy(x => x.Id)
+                .Select(x => _mapper.Map<CategoryItemViewModel>(x))
+                .ToList();
+            return Ok(list);
+        }
+
         [HttpGet("id/{id}")]
         public IActionResult GetCategory(int id)
         {

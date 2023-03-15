@@ -168,7 +168,7 @@ export const RegisterPage = () => {
 
               <div className="text-sm mt-3 ml-2 md:mt-0">
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="font-medium text-indigo-600 hover:text-indigo-500"
                 >
                   Увійти в аккаунт

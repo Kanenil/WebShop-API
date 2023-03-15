@@ -7,8 +7,33 @@ namespace ExamWebShop.Helpers
 {
     public static class ImageWorker
     {
-
-        public static Bitmap IFormFileToBitmap(IFormFile file)
+        public static string SaveImage(IFormFile image, IConfiguration configuration)
+        {
+            var bmp =IFormFileToBitmap(image);
+            var fileName = Path.GetRandomFileName() + ".jpg";
+            string[] imageSizes = ((string)configuration.GetValue<string>("ImageSizes")).Split(" ");
+            Save(bmp, fileName, imageSizes);
+            return fileName;
+        }
+        public static string SaveImage(string url, IConfiguration configuration)
+        {
+            var bmp = URLToBitmap(url);
+            var fileName = Path.GetRandomFileName() + ".jpg";
+            string[] imageSizes = ((string)configuration.GetValue<string>("ImageSizes")).Split(" ");
+            Save(bmp, fileName, imageSizes);
+            return fileName;
+        }
+        private static void Save(Bitmap bmp, string fileName, string[] sizes) 
+        {
+            foreach (var imageSize in sizes)
+            {
+                int size = int.Parse(imageSize);
+                string dirSaveImage = Path.Combine(Directory.GetCurrentDirectory(), "images", $"{size}x{size}_{fileName}");
+                var saveImage = CompressImage(bmp, size, size);
+                saveImage.Save(dirSaveImage, ImageFormat.Jpeg);
+            }
+        }
+        private static Bitmap IFormFileToBitmap(IFormFile file)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -19,7 +44,7 @@ namespace ExamWebShop.Helpers
                 return new Bitmap(img);
             }
         }
-        public static Bitmap CompressImage(Bitmap originalPic, int maxWidth, int maxHeight, bool transperent = false)
+        private static Bitmap CompressImage(Bitmap originalPic, int maxWidth, int maxHeight, bool transperent = false)
         {
             try
             {
@@ -68,6 +93,16 @@ namespace ExamWebShop.Helpers
             catch
             {
                 return null;
+            }
+        }
+        private static Bitmap URLToBitmap(string url)
+        {
+            using (var client = new WebClient())
+            {
+                using (var stream = client.OpenRead(url))
+                {
+                    return new Bitmap(stream);
+                }
             }
         }
         public static void DeleteAllImages(string fileName, IConfiguration configuration)

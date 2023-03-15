@@ -15,8 +15,10 @@ import { APP_ENV } from "../../../env";
 const countOnPage = 10;
 
 function validateURL(url: string) {
-     return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(url);
-  }
+  return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
+    url
+  );
+}
 
 export const CategoriesListPage = () => {
   const [categories, setCategories] = useState<Array<ICategoryItem>>([]);
@@ -97,7 +99,13 @@ export const CategoriesListPage = () => {
         <div className="flex-shrink-0 h-10 w-10">
           <img
             className="h-10 w-10 rounded-full"
-            src={item.image ? validateURL(item.image)?item.image:`${APP_ENV.IMAGE_PATH}100x100_${item.image}` : noimage}
+            src={
+              item.image
+                ? validateURL(item.image)
+                  ? item.image
+                  : `${APP_ENV.IMAGE_PATH}100x100_${item.image}`
+                : noimage
+            }
           />
         </div>
       </td>
@@ -239,13 +247,13 @@ export const CategoriesListPage = () => {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      NAME
+                      Назва
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      IMAGE
+                      Фотографія
                     </th>
                     <th
                       scope="col"

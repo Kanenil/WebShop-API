@@ -13,6 +13,9 @@ import { CategoriesListPage } from "./components/admin/categories/CategoriesList
 import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
 import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
 import { ProfilePage } from "./components/profile/ProfilePage";
+import { ProductsListPage } from "./components/admin/products/ProductsListPage";
+import { CreateProductPage } from "./components/admin/products/CreateProductPage";
+import { EditProductPage } from "./components/admin/products/EditProductPage";
 
 function App() {
   return (
@@ -41,6 +44,13 @@ function App() {
               <Route path="create" element={<CreateCategoryPage />}/>
               <Route path="edit" >
                 <Route path=":id" element={<EditCategoryPage />}/>
+              </Route>
+            </Route>
+            <Route path="products" >
+              <Route index element={<ProductsListPage />}/>
+              <Route path="create" element={<CreateProductPage />}/>
+              <Route path="edit" >
+                <Route path=":id" element={<EditProductPage />}/>
               </Route>
             </Route>
             <Route path="*" element={<Error404 />} />
