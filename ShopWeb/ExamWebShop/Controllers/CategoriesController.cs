@@ -2,6 +2,7 @@
 using ExamWebShop.Constants;
 using ExamWebShop.Data;
 using ExamWebShop.Data.Entities;
+using ExamWebShop.Helpers;
 using ExamWebShop.Models;
 using ExamWebShop.Models.Categories;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +34,8 @@ namespace ExamWebShop.Controllers
         {
             int.TryParse(search, out int number);
             var list = _context.Categories
-                .Where(x => !x.IsDeleted && search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true)
+                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true))
+                .OrderBy(x => x.Id)
                 .Skip((page - 1) * MaxOnPage)
                 .Take(MaxOnPage)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
@@ -54,7 +56,7 @@ namespace ExamWebShop.Controllers
         {
             int.TryParse(search, out int number);
             var count = _context.Categories
-                .Where(x => !x.IsDeleted && search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true)
+                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true))
                 .Count();
             return Ok(count);
         }
@@ -74,9 +76,7 @@ namespace ExamWebShop.Controllers
             var data = _context.Categories.SingleOrDefault(x => x.Id == model.Id);
 
             if (!String.IsNullOrEmpty(data.Image) && data.Image != model.Image)
-            {
-                DeleteAllImages(data.Image);
-            }
+                ImageWorker.DeleteAllImages(data.Image, _configuration);
 
             data.Image = model.Image;
             data.Name = model.Name;
@@ -91,30 +91,12 @@ namespace ExamWebShop.Controllers
             var data = _context.Categories.SingleOrDefault(x => x.Id == id);
 
             if (!String.IsNullOrEmpty(data.Image))
-                DeleteAllImages(data.Image);
+                ImageWorker.DeleteAllImages(data.Image, _configuration);
 
             _context.Categories.Remove(data);
             await _context.SaveChangesAsync();
 
             return Ok();
-        }
-
-        private void DeleteAllImages(string fileName)
-        {
-            try
-            {
-                string[] imageSizes = ((string)_configuration.GetValue<string>("ImageSizes")).Split(" ");
-                foreach (var imageSize in imageSizes)
-                {
-                    int size = int.Parse(imageSize);
-                    string dirRemoveImage = Path.Combine(Directory.GetCurrentDirectory(), "images", $"{size}x{size}_{fileName}");
-                    System.IO.File.Delete(dirRemoveImage);
-                }
-            }
-            catch (Exception)
-            {
-
-            }
         }
     }
 }

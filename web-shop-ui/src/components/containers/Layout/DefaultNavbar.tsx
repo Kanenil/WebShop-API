@@ -24,8 +24,8 @@ import {
 import logo from "../../../logo.svg";
 import { IAuthUser } from "../../auth/types";
 import { useSelector } from "react-redux";
-import { DefaultFooter } from "./DefaultFooter";
 import usericon from "../../../assets/user.jpg";
+import { APP_ENV } from "../../../env";
 
 const products = [
   {
@@ -63,6 +63,12 @@ const callsToAction = [
   { name: "Watch demo", href: "#", icon: PlayCircleIcon },
   { name: "Contact sales", href: "#", icon: PhoneIcon },
 ];
+
+function validateURL(url: string) {
+  return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
+    url
+  );
+}
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -194,7 +200,7 @@ export function Header() {
                     <span className="sr-only">Вікрити меню</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={image ? image : usericon}
+                      src={image ? validateURL(image)?image:`${APP_ENV.IMAGE_PATH}500x500_${image}` : usericon}
                       alt=""
                     />
                   </Menu.Button>
@@ -220,19 +226,6 @@ export function Header() {
                         >
                           Профіль
                         </Link>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <a
-                          href="#"
-                          className={classNames(
-                            active ? "bg-gray-100" : "",
-                            "block px-4 py-2 text-sm text-gray-700"
-                          )}
-                        >
-                          Налаштування
-                        </a>
                       )}
                     </Menu.Item>
                     <Menu.Item>
@@ -346,12 +339,6 @@ export function Header() {
                       >
                         Профіль
                       </Link>
-                      <a
-                        href="#"
-                        className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                      >
-                        Налаштування
-                      </a>
                       <Link
                         to="/auth/logout"
                         className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -374,7 +361,6 @@ export function Header() {
         </Dialog>
       </header>
       <Outlet />
-      <DefaultFooter />
     </>
   );
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Microsoft.Extensions.Configuration;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 
@@ -6,6 +7,7 @@ namespace ExamWebShop.Helpers
 {
     public static class ImageWorker
     {
+
         public static Bitmap IFormFileToBitmap(IFormFile file)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -66,6 +68,23 @@ namespace ExamWebShop.Helpers
             catch
             {
                 return null;
+            }
+        }
+        public static void DeleteAllImages(string fileName, IConfiguration configuration)
+        {
+            try
+            {
+                string[] imageSizes = ((string)configuration.GetValue<string>("ImageSizes")).Split(" ");
+                foreach (var imageSize in imageSizes)
+                {
+                    int size = int.Parse(imageSize);
+                    string dirRemoveImage = Path.Combine(Directory.GetCurrentDirectory(), "images", $"{size}x{size}_{fileName}");
+                    System.IO.File.Delete(dirRemoveImage);
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
     }

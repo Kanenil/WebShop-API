@@ -12,6 +12,7 @@ import AdminNavbar from "./components/containers/Layout/AdminNavbar";
 import { CategoriesListPage } from "./components/admin/categories/CategoriesListPage";
 import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
 import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
+import { ProfilePage } from "./components/profile/ProfilePage";
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
                 </Route>
               </Route>
               <Route path="logout" element={<Logout />} />
+            </Route>
+            <Route path="/profile">
+              <Route index element={<ProfilePage />} />
             </Route>
             <Route path="*" element={<Error404 />} />
           </Route>

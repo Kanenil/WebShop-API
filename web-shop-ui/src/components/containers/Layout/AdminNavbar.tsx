@@ -11,6 +11,7 @@ import logo from "../../../logo.svg";
 import { IAuthUser } from "../../auth/types";
 import { useSelector } from "react-redux";
 import usericon from "../../../assets/user.jpg";
+import { APP_ENV } from "../../../env";
 
 const navigation = [
   { name: "Головна", href: "/control-panel", current: false },
@@ -26,6 +27,12 @@ const userNavigation = [
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
+}
+
+function validateURL(url: string) {
+  return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
+    url
+  );
 }
 
 export default function AdminNavbar() {
@@ -92,7 +99,7 @@ export default function AdminNavbar() {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.image ? user.image : usericon}
+                              src={user.image ? validateURL(user.image)?user.image:`${APP_ENV.IMAGE_PATH}500x500_${user.image}` : usericon}
                               alt=""
                             />
                           </Menu.Button>
@@ -171,7 +178,7 @@ export default function AdminNavbar() {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.image ? user.image : usericon}
+                        src={user.image ? validateURL(user.image)?user.image:`${APP_ENV.IMAGE_PATH}500x500_${user.image}` : usericon}
                         alt=""
                       />
                     </div>

@@ -10,7 +10,7 @@ namespace ExamWebShop.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = Roles.Admin)]
+    [Authorize]
     public class UploadController : ControllerBase
     {
         private readonly IConfiguration _configuration;
