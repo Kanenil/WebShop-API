@@ -32,13 +32,15 @@ namespace ExamWebShop.Controllers
         [HttpGet]
         public IActionResult GetList(int page, string search, string sort, int countOnPage = 10)
         {
-            int.TryParse(search, out int number);
             var query = _context.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
-                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number || x.Category.Name.ToLower().Contains(search.ToLower())) : true));
-                
-            switch(sort)
+                .AsQueryable();
+
+            query = CreateSearchQuery(query, search);
+
+
+            switch (sort)
             {
                 case Sorts.PriceLowToHigh:
                     query = query.OrderBy(x => x.Price);
@@ -83,14 +85,46 @@ namespace ExamWebShop.Controllers
             return Ok(list);
         }
 
+        private IQueryable<ProductEntity> CreateSearchQuery(IQueryable<ProductEntity> query, string search)
+        {
+            bool findByCat = !string.IsNullOrEmpty(search) ? search.ToLower().Contains("категорія:") : false;
+
+            if (!string.IsNullOrEmpty(search) && findByCat)
+            {
+                int searchIndex = search.ToLower().LastIndexOf("категорія:") + "Категорія:".Length;
+
+                bool isComa = searchIndex < search.Length? search[searchIndex] == '\"':false;
+                
+                int searchLenght = search.IndexOf(isComa?'\"':' ', searchIndex < search.Length?searchIndex + 1: searchIndex);
+                searchLenght = searchLenght>0? searchLenght:search.Length;
+
+                string category = search.Substring(searchIndex, searchLenght - searchIndex).Trim(isComa ? '\"' : ' ');
+                string parseSearch = search.Substring(searchLenght, search.Length - searchLenght).Trim('\"').Trim();
+
+                int.TryParse(parseSearch, out int number);
+                query = query.Where(x => !x.IsDeleted && x.Category.Name.ToLower().Contains(category.ToLower()));
+                query = query.Where(x => !x.IsDeleted && (x.Name.ToLower().Contains(parseSearch.ToLower()) || x.Id == number));
+            }
+            else
+            {
+                int.TryParse(search, out int number);
+                query = query.Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number || x.Category.Name.ToLower().Contains(search.ToLower())) : true));
+            }
+
+            return query;
+        }
+
         [HttpGet("count")]
         public IActionResult GetCount(string search)
         {
-            int.TryParse(search, out int number);
-            var count = _context.Products
+            var query = _context.Products
                 .Include(x => x.Category)
-                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number || x.Category.Name.ToLower().Contains(search.ToLower())) : true))
-                .Count();
+                .Include(x => x.Images.OrderBy(i => i.Priority))
+                .AsQueryable();
+
+            query = CreateSearchQuery(query, search);
+
+            var count = query.Count();
             return Ok(count);
         }
         [HttpPost]

@@ -31,6 +31,7 @@ export const ProductsMainPage = () => {
   ) {
     setPage(parseInt(newPage));
     setSearch(newSearch);
+
     http
       .get(`/api/products/count`, {
         params: {
