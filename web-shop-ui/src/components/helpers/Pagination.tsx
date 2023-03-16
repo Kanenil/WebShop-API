@@ -1,17 +1,13 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import { useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { setCurrentPage } from "./PaginationReducer";
 import { IPaginationInfo } from "./types";
 
 export const Pagination = ({
   countItems,
   countOnPage,
   url,
-  currentPage,
-  onPageChange
+  currentPage
 }: IPaginationInfo) => {
-  const dispatch = useDispatch();
   const location = useLocation();
 
   const countPages = Math.ceil(countItems / countOnPage);
@@ -37,7 +33,6 @@ export const Pagination = ({
         <Link
           key={"page-" + page}
           to={seacrhURL}
-          onClick={() => onPageChange(page)}
           aria-current={currentPage == page ? "page" : undefined}
           className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
@@ -47,7 +42,6 @@ export const Pagination = ({
         <Link
           key={"page-" + page}
           to={seacrhURL}
-          onClick={() => onPageChange(page)}
           className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
         >
           {page}
@@ -61,7 +55,6 @@ export const Pagination = ({
           <Link
             key={"page-" + page}
             to={seacrhURL}
-            onClick={() => onPageChange(page)}
             aria-current={currentPage == page ? "page" : undefined}
             className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
@@ -71,7 +64,6 @@ export const Pagination = ({
           <Link
             key={"page-" + page}
             to={seacrhURL}
-            onClick={() => onPageChange(page)}
             className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           >
             {page}
@@ -83,7 +75,6 @@ export const Pagination = ({
         return (
           <Link
             key={"page-" + page}
-            onClick={() => onPageChange(page)}
             to={seacrhURL}
             className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           >
@@ -100,7 +91,6 @@ export const Pagination = ({
           return (
             <Link
               key={"page-" + page}
-              onClick={() => onPageChange(page)}
               to={seacrhURL}
               className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
@@ -112,7 +102,6 @@ export const Pagination = ({
             <Link
               key={"page-" + page}
               to={seacrhURL}
-              onClick={() => onPageChange(page)}
               aria-current={currentPage == page ? "page" : undefined}
               className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
@@ -122,7 +111,6 @@ export const Pagination = ({
             <Link
               key={"page-" + page}
               to={seacrhURL}
-              onClick={() => onPageChange(page)}
               className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
               {page}
@@ -136,7 +124,6 @@ export const Pagination = ({
           return (
             <Link
               key={"page-" + page}
-              onClick={() => onPageChange(page)}
               to={seacrhURL}
               className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
@@ -149,7 +136,6 @@ export const Pagination = ({
             <Link
               key={"page-" + page}
               to={seacrhURL}
-              onClick={() => onPageChange(page)}
               aria-current={currentPage == page ? "page" : undefined}
               className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
@@ -159,7 +145,6 @@ export const Pagination = ({
             <Link
               key={"page-" + page}
               to={seacrhURL}
-              onClick={() => onPageChange(page)}
               className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
               {page}
@@ -172,7 +157,6 @@ export const Pagination = ({
               key={"page-" + page}
               to={seacrhURL}
               aria-current={currentPage == page ? "page" : undefined}
-              onClick={() => onPageChange(page)}
               className="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               {page}
@@ -181,7 +165,6 @@ export const Pagination = ({
             <Link
               key={"page-" + page}
               to={seacrhURL}
-              onClick={() => onPageChange(page)}
               className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
               {page}
@@ -213,7 +196,6 @@ export const Pagination = ({
           >
             <Link
               to={prevUrl}
-              onClick={() => onPageChange(currentPage - 1)}
               className={
                 "relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 " +
                 (currentPage == 1 ? "disabled-link" : "")
@@ -225,7 +207,6 @@ export const Pagination = ({
             {content}
             <Link
               to={nextUrl}
-              onClick={() => onPageChange(currentPage + 1)}
               className={
                 "relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 " +
                 (currentPage + 1 > countPages ? "disabled-link" : "")

@@ -6,7 +6,7 @@ import {
   Popover,
   Transition,
 } from "@headlessui/react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import {
   ArrowPathIcon,
   Bars3Icon,
@@ -77,9 +77,20 @@ function classNames(...classes: string[]) {
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const navigator = useNavigate();
+
   const { isAuth, image, roles } = useSelector(
     (store: any) => store.auth as IAuthUser
   );
+
+  function handleKeyPress(event: any) {
+    if (event.key === "Enter") {
+      navigator(
+        "/products?page=1" +
+          (event.target.value ? "&search=" + event.target.value : "")
+      );
+    }
+  }
 
   return (
     <>
@@ -193,6 +204,13 @@ export function Header() {
           </Popover.Group>
 
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+            <input
+              className="shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="name"
+              type="text"
+              placeholder="Пошук"
+              onKeyPress={handleKeyPress}
+            />
             {isAuth ? (
               <Menu as="div" className="relative ml-3">
                 <div>
@@ -200,7 +218,13 @@ export function Header() {
                     <span className="sr-only">Вікрити меню</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={image ? validateURL(image)?image:`${APP_ENV.IMAGE_PATH}500x500_${image}` : usericon}
+                      src={
+                        image
+                          ? validateURL(image)
+                            ? image
+                            : `${APP_ENV.IMAGE_PATH}500x500_${image}`
+                          : usericon
+                      }
                       alt=""
                     />
                   </Menu.Button>
@@ -247,7 +271,7 @@ export function Header() {
             ) : (
               <Link
                 to="/auth/login"
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="ml-3 text-sm font-semibold leading-6 text-gray-900"
               >
                 Увійти <span aria-hidden="true">&rarr;</span>
               </Link>
@@ -331,6 +355,13 @@ export function Header() {
                   )}
                 </div>
                 <div className="py-6">
+                  <input
+                    className="shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="name"
+                    type="text"
+                    placeholder="Пошук"
+                    onKeyPress={handleKeyPress}
+                  />
                   {isAuth ? (
                     <>
                       <Link

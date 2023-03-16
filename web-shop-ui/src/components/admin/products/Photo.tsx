@@ -6,11 +6,11 @@ export const Photo = ({ photo, onDelete }: PhotoProps) => {
   
     return (
       <div
-        className="relative overflow-hidden rounded-lg shadow-md cursor-pointer"
+        className="relative overflow-hidden rounded-lg shadow-md cursor-pointer flex justify-center items-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <img src={photo.url} alt="" className="h-72 object-cover" />
+        <img src={photo.url} alt="" className="h-72 object-contain max-w-full" />
         {isHovered && (
           <button
             className="absolute top-0 right-0 m-2 p-2 text-white bg-red-500 rounded-full"

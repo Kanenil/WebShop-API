@@ -2,13 +2,10 @@ import { ChangeEvent, useEffect, useState } from "react";
 import http from "../../../http";
 import { IProductTableItem } from "./types";
 import noimage from "../../../assets/no-image.webp";
-import { Link, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { IPagination } from "../../helpers/types";
-import { setCurrentPage } from "../../helpers/PaginationReducer";
 import { Pagination } from "../../helpers/Pagination";
 import { APP_ENV } from "../../../env";
 
@@ -25,62 +22,51 @@ export const ProductsListPage = () => {
     const [count, setCount] = useState<number>(1);
     const [deleteId, setDeleteId] = useState<number>(0);
     const [open, setOpen] = useState(false);
-    const [search, setSearch] = useState<string>("");
-  
-    const { currentPage } = useSelector(
-      (store: any) => store.pagination as IPagination
-    );
-  
+    const [page, setPage] = useState<number>(1);
+
+    const navigator = useNavigate();
     const cancelButtonRef = useRef(null);
-    const dispatch = useDispatch();
     const location = useLocation();
   
-    useEffect(() => {
-      http.get(`/api/products/count`).then((resp) => {
+    function handleSearchChange(newSearch : string, newPage : string) {
+      setPage(parseInt(newPage));
+      http.get(`/api/products/count`, {
+        params: {
+          'search': newSearch
+        }
+      }).then((resp) => {
         setCount(resp.data);
       });
   
-      const searchParams = new URLSearchParams(location.search);
-      const page = searchParams.get("page");
-      const pageInt = page ? parseInt(page) : 1;
-  
-      http.get(`/api/products?page=${pageInt}`).then((resp) => {
+      http.get('/api/products', {
+        params: {
+          'page': newPage,
+          'search': newSearch
+        }
+      }).then((resp) => {
         setProducts(resp.data);
       });
+    }
   
-      if (pageInt !== currentPage) dispatch(setCurrentPage(pageInt));
-    }, []);
-  
-    const pageChanged = (page: number, search: string | null = null) => {
-      http
-        .get(`/api/products/count${search ? `?search=${search}` : ""}`)
-        .then((resp) => {
-          setCount(resp.data);
-        });
-  
-      http
-        .get(`/api/products?page=${page}${search ? `&search=${search}` : ""}`)
-        .then((resp) => {
-          setProducts(resp.data);
-        });
-  
-      dispatch(setCurrentPage(page));
-    };
+    useEffect(() => {
+      const searchParams = new URLSearchParams(location.search);
+      const newSearch = searchParams.get('search') || "";
+      const newPage = searchParams.get('page') || "1";
+      handleSearchChange(newSearch, newPage);
+    }, [location.search])
   
     const deleteHandler = () => {
       http.delete("/api/products/" + deleteId).then((resp) => {
-        pageChanged(currentPage);
+        const searchParams = new URLSearchParams(location.search);
+      const newSearch = searchParams.get('search') || "";
+      const newPage = searchParams.get('page') || "1";
+      handleSearchChange(newSearch, newPage);
       });
-    };
-  
-    const onPageChangeHandler = (page: number) => {
-      pageChanged(page, search);
     };
   
     const OnSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      setSearch(value);
-      pageChanged(1, value);
+      navigator("/control-panel/products?page=1"+(value?"&search="+value:""));
     };
   
     const content = products.map((item) => (
@@ -97,6 +83,9 @@ export const ProductsListPage = () => {
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="text-sm font-medium text-gray-900">{item.category}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-sm font-medium text-gray-900">{item.price}</div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="flex-shrink-0 h-10 w-10">
@@ -225,7 +214,6 @@ export const ProductsListPage = () => {
             <div className="flex items-center">
               <input
                 onChange={OnSearchHandler}
-                value={search}
                 type="text"
                 className="border-2 leading-tight border-gray-400 rounded px-4 py-2"
                 placeholder="Пошук..."
@@ -262,6 +250,12 @@ export const ProductsListPage = () => {
                           scope="col"
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
+                          Ціна
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
                           Фотографія
                         </th>
                         <th
@@ -279,9 +273,8 @@ export const ProductsListPage = () => {
             </div>
             <Pagination
               countItems={count}
-              currentPage={currentPage}
+              currentPage={page}
               countOnPage={countOnPage}
-              onPageChange={onPageChangeHandler}
               url={""}
             />
           </div>

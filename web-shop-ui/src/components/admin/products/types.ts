@@ -3,6 +3,7 @@ import { ReactElement } from "react";
 export interface IProductTableItem {
   id: number;
   name: string;
+  price: string;
   category: string;
   images: Array<string>;
 }

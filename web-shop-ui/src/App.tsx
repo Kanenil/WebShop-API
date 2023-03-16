@@ -16,6 +16,9 @@ import { ProfilePage } from "./components/profile/ProfilePage";
 import { ProductsListPage } from "./components/admin/products/ProductsListPage";
 import { CreateProductPage } from "./components/admin/products/CreateProductPage";
 import { EditProductPage } from "./components/admin/products/EditProductPage";
+import { ProductsMainPage } from "./components/products/ProductsMainPage";
+import { MainPage } from "./components/main/MainPage";
+import { ProductPage } from "./components/products/ProductPage";
 
 function App() {
   return (
@@ -23,6 +26,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Header />}>
+            <Route index element={<MainPage />} />
             <Route path="/auth">
               <Route path="login" element={<LoginPage />} />
               <Route path="register">
@@ -36,21 +40,25 @@ function App() {
             <Route path="/profile">
               <Route index element={<ProfilePage />} />
             </Route>
+            <Route path="/products">
+              <Route index element={<ProductsMainPage />} />
+              <Route path=":id" element={<ProductPage/>}/>
+            </Route>
             <Route path="*" element={<Error404 />} />
           </Route>
           <Route path="/control-panel" element={<AdminNavbar />}>
-            <Route path="categories" >
-              <Route index element={<CategoriesListPage />}/>
-              <Route path="create" element={<CreateCategoryPage />}/>
-              <Route path="edit" >
-                <Route path=":id" element={<EditCategoryPage />}/>
+            <Route path="categories">
+              <Route index element={<CategoriesListPage />} />
+              <Route path="create" element={<CreateCategoryPage />} />
+              <Route path="edit">
+                <Route path=":id" element={<EditCategoryPage />} />
               </Route>
             </Route>
-            <Route path="products" >
-              <Route index element={<ProductsListPage />}/>
-              <Route path="create" element={<CreateProductPage />}/>
-              <Route path="edit" >
-                <Route path=":id" element={<EditProductPage />}/>
+            <Route path="products">
+              <Route index element={<ProductsListPage />} />
+              <Route path="create" element={<CreateProductPage />} />
+              <Route path="edit">
+                <Route path=":id" element={<EditProductPage />} />
               </Route>
             </Route>
             <Route path="*" element={<Error404 />} />

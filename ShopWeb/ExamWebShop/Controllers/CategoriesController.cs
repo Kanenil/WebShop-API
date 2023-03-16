@@ -20,7 +20,6 @@ namespace ExamWebShop.Controllers
         private readonly AppEFContext _context;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        private const int MaxOnPage = 10;
 
         public CategoriesController(AppEFContext context, IMapper mapper, IConfiguration configuration)
         {
@@ -30,14 +29,14 @@ namespace ExamWebShop.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetList(int page, string search)
+        public IActionResult GetList(int page, string search, int countOnPage = 10)
         {
             int.TryParse(search, out int number);
             var list = _context.Categories
                 .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true))
                 .OrderBy(x => x.Id)
-                .Skip((page - 1) * MaxOnPage)
-                .Take(MaxOnPage)
+                .Skip((page - 1) * countOnPage)
+                .Take(countOnPage)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
                 .ToList();
             return Ok(list);

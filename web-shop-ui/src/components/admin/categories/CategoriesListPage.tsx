@@ -2,13 +2,10 @@ import { ChangeEvent, useEffect, useState } from "react";
 import http from "../../../http";
 import { ICategoryItem } from "./types";
 import noimage from "../../../assets/no-image.webp";
-import { Link, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { IPagination } from "../../helpers/types";
-import { setCurrentPage } from "../../helpers/PaginationReducer";
 import { Pagination } from "../../helpers/Pagination";
 import { APP_ENV } from "../../../env";
 
@@ -23,64 +20,63 @@ function validateURL(url: string) {
 export const CategoriesListPage = () => {
   const [categories, setCategories] = useState<Array<ICategoryItem>>([]);
   const [count, setCount] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const navigator = useNavigate();
   const [deleteId, setDeleteId] = useState<number>(0);
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState<string>("");
 
-  const { currentPage } = useSelector(
-    (store: any) => store.pagination as IPagination
-  );
 
   const cancelButtonRef = useRef(null);
-  const dispatch = useDispatch();
   const location = useLocation();
 
-  useEffect(() => {
-    http.get(`/api/categories/count`).then((resp) => {
+
+
+
+  function handleSearchChange(newSearch : string, newPage : string) {
+
+    setPage(parseInt(newPage));
+
+    http.get(`/api/categories/count`, {
+      params: {
+        'search': newSearch
+      }
+    }).then((resp) => {
       setCount(resp.data);
     });
 
-    const searchParams = new URLSearchParams(location.search);
-    const page = searchParams.get("page");
-    const pageInt = page ? parseInt(page) : 1;
-
-    http.get(`/api/categories?page=${pageInt}`).then((resp) => {
+    http.get('/api/categories', {
+      params: {
+        'page': newPage,
+        'search': newSearch
+      }
+    }).then((resp) => {
       setCategories(resp.data);
-    });
+    }).catch(error=>{
+      navigator("/error404");
+    })
+  }
 
-    if (pageInt !== currentPage) dispatch(setCurrentPage(pageInt));
-  }, []);
-
-  const pageChanged = (page: number, search: string | null = null) => {
-    http
-      .get(`/api/categories/count${search ? `?search=${search}` : ""}`)
-      .then((resp) => {
-        setCount(resp.data);
-      });
-
-    http
-      .get(`/api/categories?page=${page}${search ? `&search=${search}` : ""}`)
-      .then((resp) => {
-        setCategories(resp.data);
-      });
-
-    dispatch(setCurrentPage(page));
-  };
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const newSearch = searchParams.get('search') || "";
+    const newPage = searchParams.get('page') || "1";
+    handleSearchChange(newSearch, newPage);
+  }, [location.search])
 
   const deleteHandler = () => {
     http.delete("/api/categories/" + deleteId).then((resp) => {
-      pageChanged(currentPage);
+      const searchParams = new URLSearchParams(location.search);
+      const newSearch = searchParams.get('search') || "";
+      const newPage = searchParams.get('page') || "1";
+      handleSearchChange(newSearch, newPage);
     });
   };
 
-  const onPageChangeHandler = (page: number) => {
-    pageChanged(page, search);
-  };
+
 
   const OnSearchHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setSearch(value);
-    pageChanged(1, value);
+    navigator("/control-panel/categories?page=1"+(value?"&search="+value:""));
   };
 
   const content = categories.map((item) => (
@@ -222,7 +218,6 @@ export const CategoriesListPage = () => {
         <div className="flex items-center">
           <input
             onChange={OnSearchHandler}
-            value={search}
             type="text"
             className="border-2 leading-tight border-gray-400 rounded px-4 py-2"
             placeholder="Пошук..."
@@ -270,9 +265,8 @@ export const CategoriesListPage = () => {
         </div>
         <Pagination
           countItems={count}
-          currentPage={currentPage}
+          currentPage={page}
           countOnPage={countOnPage}
-          onPageChange={onPageChangeHandler}
           url={""}
         />
       </div>

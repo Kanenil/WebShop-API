@@ -21,7 +21,6 @@ namespace ExamWebShop.Controllers
         private readonly AppEFContext _context;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        private const int MaxOnPage = 10;
 
         public ProductsController(AppEFContext context, IMapper mapper, IConfiguration configuration)
         {
@@ -31,19 +30,56 @@ namespace ExamWebShop.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetList(int page, string search)
+        public IActionResult GetList(int page, string search, string sort, int countOnPage = 10)
         {
             int.TryParse(search, out int number);
-            var list = _context.Products
+            var query = _context.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
-                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number || x.Category.Name.ToLower().Contains(search.ToLower())) : true))
-                .OrderBy(x => x.Id)
-                .Skip((page - 1) * MaxOnPage)
-                .Take(MaxOnPage)
+                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number || x.Category.Name.ToLower().Contains(search.ToLower())) : true));
+                
+            switch(sort)
+            {
+                case Sorts.PriceLowToHigh:
+                    query = query.OrderBy(x => x.Price);
+                    break;
+                case Sorts.PriceHighToLow:
+                    query = query.OrderByDescending(x => x.Price);
+                    break;
+                case Sorts.NameAscending:
+                    query = query.OrderBy(x => x.Name);
+                    break;
+                case Sorts.NameDescending:
+                    query = query.OrderByDescending(x => x.Name);
+                    break;
+                default:
+                case Sorts.Default:
+                    query = query.OrderBy(x => x.Id);
+                    break;
+                
+            }
+
+            var list = query
+                .Skip((page - 1) * countOnPage)
+                .Take(countOnPage)
                 .Select(x => _mapper.Map<ProductItemViewModel>(x))
                 .ToList();
             
+            return Ok(list);
+        }
+
+        [HttpGet("most-buys")]
+        public IActionResult GetList(int count)
+        {
+            var list = _context.Products
+                .Include(x => x.Category)
+                .Include(x => x.Images.OrderBy(i => i.Priority))
+                .Where(x => !x.IsDeleted)
+                .OrderBy(x => x.Id)
+                .Take(count)
+                .Select(x => _mapper.Map<ProductItemViewModel>(x))
+                .ToList();
+
             return Ok(list);
         }
 

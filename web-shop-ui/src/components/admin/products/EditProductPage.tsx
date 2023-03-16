@@ -7,7 +7,6 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   FormValues,
   ICategoryValue,
-  ICreateProduct,
   IEditProduct,
   PhotoData,
 } from "./types";
@@ -49,11 +48,15 @@ export const EditProductPage = () => {
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
     const items = Array.from(photos);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    const items2 = Array.from<FormValues | string>(state.images);
+    const [reorderedItemPhotos] = items.splice(result.source.index, 1);
+    const [reorderedItemState] = items2.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItemPhotos);
+    items2.splice(result.destination.index, 0, reorderedItemState);
     setPhotos(items);
+    setState({...state, images: items2 as (FormValues[] | string[])});
   };
-
+  
   const selectors = categories.map((item) => (
     <option key={item.id} value={item.id}>
       {item.name}
@@ -140,6 +143,8 @@ export const EditProductPage = () => {
       parseFloat(state.price) > 0.01
     ) {
       const uploadedImages: string[] = [];
+      console.log(photos, state.images);
+      
       for (const item of state.images) {
         if ((item as FormValues).imageFile == undefined) {
           uploadedImages.push(item as string);
