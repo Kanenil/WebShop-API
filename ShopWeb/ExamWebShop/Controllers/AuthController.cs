@@ -39,7 +39,15 @@ namespace ExamWebShop.Controllers
             var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
 
             if (user == null)
-                return BadRequest();
+            {
+                user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user == null)
+                    return BadRequest();
+
+                var resultUserLogin = await _userManager.AddLoginAsync(user, info);
+                if (!resultUserLogin.Succeeded)
+                    return BadRequest();
+            }
 
             var token = await _jwtTokenService.CreateToken(user);
             return Ok(new { token });

@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import http from "../../http";
-import noimage from "../../assets/no-image.webp";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../env";
+import http from "../../http";
 import Carousel from "../helpers/Carousel";
+import noimage from "../../assets/no-image.webp";
+import { useDispatch, useSelector } from "react-redux";
+import { ICart, ICartItem, setCart, setOpen } from "../helpers/CartReducer";
+import { IProduct } from "./types";
 
-interface IProduct {
-  name: string;
-  price: string;
-  description: string;
-  category: string;
-  images: string[];
-}
+
 
 export const ProductPage = () => {
-  const { id } = useParams();
-  const navigator = useNavigate();
-
+  
   const [product, setProduct] = useState<IProduct>({
     name: "",
     price: "",
@@ -25,13 +20,46 @@ export const ProductPage = () => {
     images: [],
   });
 
+  const {cart} = useSelector((store: any) => store.shoppingCart as ICart);
+
+  const navigator = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const { id } = useParams();
+
+  const addItemToCart = () => {
+    const index = cart.findIndex(
+      (cartItem: ICartItem) => cartItem.id === parseInt(id || "0")
+    );
+    if (index === -1) {
+      const updatedCart = [
+        ...cart,
+        {
+          id: parseInt(id || "0"),
+          name: product.name,
+          category: product.category,
+          price: parseInt(product.price || "0"),
+          image: product.images[0]
+            ? APP_ENV.IMAGE_PATH + "300x300_" + product.images[0]
+            : noimage,
+          quantity: 1,
+        },
+      ];
+      dispatch(setCart(updatedCart));
+    }
+  };
+
   useEffect(() => {
-    http.get("/api/products/id/" + id).then((resp) => {
-      setProduct(resp.data);
-    }).catch(error=>{
-        navigator('/error404')
-    })
-  }, []);
+    http
+      .get("/api/products/id/" + id)
+      .then((resp) => {
+        setProduct(resp.data);
+      })
+      .catch((error) => {
+        navigator("/error404");
+      });
+  }, [location.pathname]);
 
   return (
     <div className="pt-6">
@@ -63,7 +91,7 @@ export const ProductPage = () => {
           <li>
             <div className="flex items-center">
               <Link
-                to={"/products?page=1&search=" + product?.category}
+                to={'/products?page=1&search=Категорія:"'+product?.category+'"'}
                 className="mr-2 text-sm font-medium text-gray-900"
               >
                 {product?.category}
@@ -104,17 +132,28 @@ export const ProductPage = () => {
 
         <div className="mt-4 lg:row-span-3 lg:mt-0">
           <p className="text-3xl tracking-tight text-gray-900">
-            {product?.price} ₴
+            {product?.price.toLocaleString()} ₴
           </p>
 
-          <form className="mt-10">
+          {cart.findIndex(
+            (cartItem: ICartItem) => cartItem.id === parseInt(id || "0")
+          ) === -1 ? (
+            <button
+                type="submit"
+                onClick={addItemToCart}
+                className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Добавити в корзину
+              </button>
+          ) : (
             <button
               type="submit"
-              className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              onClick={()=>dispatch(setOpen(true))}
+              className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 py-3 px-8 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              Добавити в корзину
+              В кошику
             </button>
-          </form>
+          )}
         </div>
 
         <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pb-16 lg:pr-8">

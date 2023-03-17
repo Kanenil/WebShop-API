@@ -3,7 +3,8 @@ export interface IAuthUser {
     roles:string,
     name: string,
     email: string,
-    isAuth: boolean
+    isAuth: boolean,
+    emailConfirmed: boolean
 };
 
 export enum AuthActionType {

@@ -27,6 +27,7 @@ namespace ExamWebShop.Services
             {
                 new Claim("email", user.Email),
                 new Claim("name", $"{user.FirstName} {user.LastName}"),
+                new Claim("emailConfirmed", $"{user.EmailConfirmed}"),
                 new Claim("image", user.Image ?? string.Empty)
             };
 

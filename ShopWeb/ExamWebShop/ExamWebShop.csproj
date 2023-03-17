@@ -18,9 +18,20 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
 	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="email-template\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="email-template\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

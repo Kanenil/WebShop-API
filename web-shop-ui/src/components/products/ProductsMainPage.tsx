@@ -6,6 +6,8 @@ import { IProductTableItem } from "../admin/products/types";
 import noimage from "../../assets/no-image.webp";
 import { Pagination } from "../helpers/Pagination";
 import { useLocation } from "react-router-dom";
+import { TagIcon } from "@heroicons/react/20/solid";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 function validateURL(url: string) {
   return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
@@ -48,7 +50,7 @@ export const ProductsMainPage = () => {
           page: newPage,
           search: newSearch,
           sort: newSort,
-          countOnPage: countOnPage
+          countOnPage: countOnPage,
         },
       })
       .then((resp) => {
@@ -78,9 +80,18 @@ export const ProductsMainPage = () => {
     <>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="flex justify-between">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            {search ? `"${search}"` : ""}
-          </h2>
+          {search ? (
+            <span className="leading-7 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+              <TagIcon className="flex-shrink-0 -ml-0.5 mr-1.5 h-4 w-4 text-gray-400" />
+              {search}
+              <Link to="/products?page=1">
+                <XMarkIcon className="flex-shrink-0 ml-0.5 mr-1.5 h-4 w-4 text-gray-800" />
+              </Link>
+            </span>
+          ) : (
+            <span className="leading-7"></span>
+          )}
+
           <div className="relative">
             <select
               onChange={onChangeSort}
@@ -126,7 +137,7 @@ export const ProductsMainPage = () => {
                   </p>
                 </div>
                 <p className="text-sm font-medium text-gray-900">
-                  {product.price}
+                  {product.price.toLocaleString()} ₴
                 </p>
               </div>
             </div>

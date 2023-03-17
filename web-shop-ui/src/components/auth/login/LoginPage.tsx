@@ -116,9 +116,9 @@ export const LoginPage = () => {
               </div>
 
               <div className="text-sm mt-3 ml-2 md:mt-0">
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                <Link to="/auth/forgotpassword" className="font-medium text-indigo-600 hover:text-indigo-500">
                   Забули пароль?
-                </a>
+                </Link>
               </div>
             </div>
 

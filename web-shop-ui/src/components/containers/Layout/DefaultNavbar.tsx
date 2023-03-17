@@ -13,6 +13,7 @@ import {
   ChartPieIcon,
   CursorArrowRaysIcon,
   FingerPrintIcon,
+  ShoppingCartIcon,
   SquaresPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -23,9 +24,11 @@ import {
 } from "@heroicons/react/20/solid";
 import logo from "../../../logo.svg";
 import { IAuthUser } from "../../auth/types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import usericon from "../../../assets/user.jpg";
 import { APP_ENV } from "../../../env";
+import { Cart } from "../../helpers/Cart";
+import { setOpen } from "../../helpers/CartReducer";
 
 const products = [
   {
@@ -78,6 +81,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigator = useNavigate();
+
+  const dispatch = useDispatch();
 
   const { isAuth, image, roles } = useSelector(
     (store: any) => store.auth as IAuthUser
@@ -211,6 +216,14 @@ export function Header() {
               placeholder="Пошук"
               onKeyPress={handleKeyPress}
             />
+            <button
+              type="button"
+              onClick={() => dispatch(setOpen(true))}
+              className="ml-3 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray focus:ring-offset-2 focus:ring-offset-white-800"
+            >
+              <span className="sr-only">Корзина</span>
+              <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
+            </button>
             {isAuth ? (
               <Menu as="div" className="relative ml-3">
                 <div>
@@ -362,6 +375,13 @@ export function Header() {
                     placeholder="Пошук"
                     onKeyPress={handleKeyPress}
                   />
+                  <button
+                    type="button"
+                    onClick={() => dispatch(setOpen(true))}
+                    className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    Корзина
+                  </button>
                   {isAuth ? (
                     <>
                       <Link
@@ -392,6 +412,7 @@ export function Header() {
         </Dialog>
       </header>
       <Outlet />
+      <Cart />
     </>
   );
 }

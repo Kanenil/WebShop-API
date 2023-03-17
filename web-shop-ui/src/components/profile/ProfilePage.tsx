@@ -6,6 +6,7 @@ import { useState } from "react";
 import http from "../../http";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { CheckIcon } from "@heroicons/react/20/solid";
 
 interface IChangeInformation {
   image: boolean;
@@ -128,6 +129,16 @@ export const ProfilePage = () => {
     }
     setFormValues(undefined);
     setChangeStatus({ ...changeStatus, image: false });
+  };
+
+  const onConfirmEmail = () => {
+    http.get("/api/account/confirmEmail");
+  };
+
+  const onChangePassword = () => {
+    http.post("/api/account/forgotPassword", {
+      email: user.email
+    });
   };
 
   return (
@@ -296,7 +307,7 @@ export const ProfilePage = () => {
               <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Прізвище</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {changeStatus.lastname ? (
+                  {changeStatus.lastname ? (
                     <>
                       <input
                         className="shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -333,20 +344,6 @@ export const ProfilePage = () => {
                       Змінити прізвище
                     </button>
                   )}
-                  
-                </dd>
-              </div>
-              <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">
-                  Електронна адреса
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <a
-                    href="#"
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Змінити електронну адресу
-                  </a>
                 </dd>
               </div>
             </dl>
@@ -366,12 +363,12 @@ export const ProfilePage = () => {
               <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Пароль</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <a
-                    href="#"
+                  <button
+                    onClick={onChangePassword}
                     className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Змінити пароль
-                  </a>
+                  </button>
                 </dd>
               </div>
               <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -379,12 +376,19 @@ export const ProfilePage = () => {
                   Електронна адреса
                 </dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <a
-                    href="#"
-                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Підтвердити електронну адресу
-                  </a>
+                  {user.emailConfirmed ? (
+                    <h1 className="text-green-500 text-base">
+                      Підтверджена{" "}
+                      <CheckIcon className="h-6 w-6 inline-block" />
+                    </h1>
+                  ) : (
+                    <button
+                      onClick={onConfirmEmail}
+                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      Підтвердити електронну адресу
+                    </button>
+                  )}
                 </dd>
               </div>
             </dl>

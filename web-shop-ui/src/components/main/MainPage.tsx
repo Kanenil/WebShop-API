@@ -58,7 +58,7 @@ export const MainPage = () => {
                     <p className="mt-1 text-sm text-gray-500">{product.category}</p>
                   </div>
                   <p className="text-sm font-medium text-gray-900">
-                    {product.price}
+                    {product.price.toLocaleString()} ₴
                   </p>
                 </div>
               </div>
