@@ -60,6 +60,10 @@ namespace ExamWebShop.Controllers
         {
             string email = User.Claims.First().Value;
             var user = await _userManager.FindByEmailAsync(email);
+
+            if(user.EmailConfirmed)
+                return BadRequest();
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var frontendUrl = _configuration.GetValue<string>("FrontEndURL");
 

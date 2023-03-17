@@ -22,6 +22,7 @@ import { ProductPage } from "./components/products/ProductPage";
 import { ForgotPasswordPage } from "./components/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./components/auth/ResetPasswordPage";
 import { ConfirmEmailPage } from "./components/profile/ConfirmEmail";
+import { CategoriesMainPage } from "./components/categories/CategoriesMainPage";
 
 function App() {
   return (
@@ -45,6 +46,9 @@ function App() {
             <Route path="/profile">
               <Route index element={<ProfilePage />} />
               <Route path="confirmEmail" element={<ConfirmEmailPage />} />
+            </Route>
+            <Route path="/categories">
+              <Route index element={<CategoriesMainPage />} />
             </Route>
             <Route path="/products">
               <Route index element={<ProductsMainPage />} />

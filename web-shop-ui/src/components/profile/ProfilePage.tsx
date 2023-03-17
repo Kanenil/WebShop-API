@@ -7,6 +7,7 @@ import http from "../../http";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { CheckIcon } from "@heroicons/react/20/solid";
+import { Notification } from "../helpers/Notification";
 
 interface IChangeInformation {
   image: boolean;
@@ -19,6 +20,12 @@ interface IEditUser {
   name: string;
   lastname: string;
   email: string;
+}
+
+interface INotification {
+  message: string;
+  type: "success" | "warning" | "error" | "info";
+  state: boolean;
 }
 
 type FormValues = {
@@ -35,6 +42,30 @@ function validateURL(url: string) {
 export const ProfilePage = () => {
   const user = useSelector((store: any) => store.auth as IAuthUser);
   const [formValues, setFormValues] = useState<FormValues>();
+  const [showNotification, setShowNotification] = useState<INotification>({
+    message: "",
+    type: "success",
+    state: false,
+  });
+
+  const handleShowNotification = (
+    message: string,
+    type: "success" | "warning" | "error" | "info"
+  ) => {
+    setShowNotification({
+      message: message,
+      type: type,
+      state: true,
+    });
+
+    setTimeout(() => {
+      setShowNotification({
+        message: "",
+        type: "success",
+        state: false,
+      });
+    }, 5000);
+  };
 
   const [editUser, setEditUser] = useState<IEditUser>({
     name: user.name.split(" ")[0],
@@ -132,17 +163,39 @@ export const ProfilePage = () => {
   };
 
   const onConfirmEmail = () => {
-    http.get("/api/account/confirmEmail");
+    http.get("/api/account/confirmEmail").then(resp=>{
+      handleShowNotification("Надіслано лист на пошту з підтвердженням!", "success");
+    }).catch(error=>{
+      handleShowNotification("Помилка при надіслано листа на пошту!", "error");
+    })
   };
 
   const onChangePassword = () => {
     http.post("/api/account/forgotPassword", {
-      email: user.email
+      email: user.email,
+    }).then(resp=>{
+      handleShowNotification("Надіслано лист на пошту з зміною пароля!", "success");
+    }).catch(error=>{
+      handleShowNotification("Помилка при надіслано листа на пошту!", "error");
     });
   };
 
   return (
     <>
+      {showNotification.state && (
+        <Notification
+          message={showNotification.message}
+          type={showNotification.type}
+          onClose={() =>
+            setShowNotification({
+              message: "",
+              type: "success",
+              state: false,
+            })
+          }
+        />
+      )}
+
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">

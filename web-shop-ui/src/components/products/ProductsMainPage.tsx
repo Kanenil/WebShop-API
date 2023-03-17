@@ -21,7 +21,7 @@ export const ProductsMainPage = () => {
   const [products, setProducts] = useState<Array<IProductTableItem>>([]);
   const [count, setCount] = useState<number>(1);
   const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string[]>([]);
 
   const navigator = useNavigate();
   const location = useLocation();
@@ -32,7 +32,30 @@ export const ProductsMainPage = () => {
     newSort: string
   ) {
     setPage(parseInt(newPage));
-    setSearch(newSearch);
+
+    const outputArray = [];
+
+    let remainingString = newSearch.trim();
+
+    while (remainingString.length > 0) {
+      const categoryRegex = /Категорія:"([^"]+)"/;
+      const categoryMatch = remainingString.match(categoryRegex);
+
+      if (categoryMatch) {
+        outputArray.push(categoryMatch[0]);
+        remainingString = remainingString.replace(categoryRegex, "");
+      } else {
+        const remainingWords = remainingString.trim().split(/\s+/);
+
+        for (let word of remainingWords) {
+          outputArray.push(word);
+        }
+
+        remainingString = "";
+      }
+    }
+
+    setSearch(outputArray);
 
     http
       .get(`/api/products/count`, {
@@ -58,6 +81,20 @@ export const ProductsMainPage = () => {
       });
   }
 
+  function handleKeyPress(event: any) {
+    if (event.key === "Enter" && event.target.value) {
+      navigator(
+        "/products?page=1" +
+          (event.target.value
+            ? "&search=" +
+              search.toString().replace(",", " ") +
+              ` ${event.target.value}`
+            : "")
+      );
+      event.target.value = "";
+    }
+  }
+
   const onChangeSort = (event: any) => {
     const searchParams = new URLSearchParams(location.search);
     const newSearch = searchParams.get("search") || "";
@@ -79,23 +116,35 @@ export const ProductsMainPage = () => {
   return (
     <>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+        {search.length > 0 &&
+          search.map((item) => {
+            const searchFilter = search
+              .filter((searchItem) => searchItem != item)
+              .toString()
+              .replace(",", " ");
+            return (
+              <span
+                key={item}
+                className="mr-2 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800"
+              >
+                <TagIcon className="flex-shrink-0 -ml-0.5 mr-1.5 h-4 w-4 text-gray-400" />
+                {item}
+                <Link
+                  to={
+                    "/products?page=1" +
+                    (searchFilter && `&search=${searchFilter}`)
+                  }
+                >
+                  <XMarkIcon className="flex-shrink-0 ml-0.5 mr-1.5 h-4 w-4 text-gray-800" />
+                </Link>
+              </span>
+            );
+          })}
         <div className="flex justify-between">
-          {search ? (
-            <span className="leading-7 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-              <TagIcon className="flex-shrink-0 -ml-0.5 mr-1.5 h-4 w-4 text-gray-400" />
-              {search}
-              <Link to="/products?page=1">
-                <XMarkIcon className="flex-shrink-0 ml-0.5 mr-1.5 h-4 w-4 text-gray-800" />
-              </Link>
-            </span>
-          ) : (
-            <span className="leading-7"></span>
-          )}
-
-          <div className="relative">
+          <div className="leading-7">
             <select
               onChange={onChangeSort}
-              className="border border-gray-300 rounded-full text-gray-600 h-10 pl-4 pr-8 bg-white hover:border-gray-400 focus:outline-none appearance-none"
+              className="mt-3 border border-gray-300 rounded-full text-gray-600 h-10 pl-4 pr-8 bg-white hover:border-gray-400 focus:outline-none appearance-none"
             >
               <option value="">За замовчуванням</option>
               <option value="priceLowToHigh">За зростанням ціни</option>
@@ -103,6 +152,16 @@ export const ProductsMainPage = () => {
               <option value="nameAscending">За алфавітом (A-Z)</option>
               <option value="nameDescending">За алфавітом (Z-A)</option>
             </select>
+          </div>
+
+          <div className="relative">
+            <input
+              className="shadow appearance-none border rounded text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="name"
+              type="text"
+              placeholder="Пошук"
+              onKeyPress={handleKeyPress}
+            />
           </div>
         </div>
 

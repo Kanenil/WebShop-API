@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Text.RegularExpressions;
 
 namespace ExamWebShop.Controllers
 {
@@ -87,28 +88,48 @@ namespace ExamWebShop.Controllers
 
         private IQueryable<ProductEntity> CreateSearchQuery(IQueryable<ProductEntity> query, string search)
         {
-            bool findByCat = !string.IsNullOrEmpty(search) ? search.ToLower().Contains("категорія:") : false;
+            if(string.IsNullOrEmpty(search))
+                return query;
 
-            if (!string.IsNullOrEmpty(search) && findByCat)
+            List<string> array = new List<string>();
+
+            string remainingString = search.Trim();
+
+            while (remainingString.Length > 0)
             {
-                int searchIndex = search.ToLower().LastIndexOf("категорія:") + "Категорія:".Length;
+                Regex categoryRegex = new Regex(@"Категорія:""([^""]+)""");
+                Match categoryMatch = categoryRegex.Match(remainingString);
 
-                bool isComa = searchIndex < search.Length? search[searchIndex] == '\"':false;
-                
-                int searchLenght = search.IndexOf(isComa?'\"':' ', searchIndex < search.Length?searchIndex + 1: searchIndex);
-                searchLenght = searchLenght>0? searchLenght:search.Length;
+                if (categoryMatch.Success)
+                {
+                    array.Add(categoryMatch.Groups[0].Value);
+                    remainingString = categoryRegex.Replace(remainingString, "");
+                }
+                else
+                {
+                    string[] remainingWords = remainingString.Trim().Split(' ');
 
-                string category = search.Substring(searchIndex, searchLenght - searchIndex).Trim(isComa ? '\"' : ' ');
-                string parseSearch = search.Substring(searchLenght, search.Length - searchLenght).Trim('\"').Trim();
+                    foreach (string word in remainingWords)
+                    {
+                        array.Add(word);
+                    }
 
-                int.TryParse(parseSearch, out int number);
-                query = query.Where(x => !x.IsDeleted && x.Category.Name.ToLower().Contains(category.ToLower()));
-                query = query.Where(x => !x.IsDeleted && (x.Name.ToLower().Contains(parseSearch.ToLower()) || x.Id == number));
+                    remainingString = "";
+                }
             }
-            else
+
+            foreach (var item in array)
             {
-                int.TryParse(search, out int number);
-                query = query.Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number || x.Category.Name.ToLower().Contains(search.ToLower())) : true));
+                var category = Regex.Match(item, @"(?<=:)(.*)");
+                if (category.Success)
+                {
+                    string val = category.Groups[1].Value.Trim('\"');
+                    query = query.Where(x => !x.IsDeleted && x.Category.Name.ToLower().Contains(val.ToLower()));
+                }
+                else
+                {
+                    query = query.Where(x => !x.IsDeleted && x.Name.ToLower().Contains(item.ToLower()));
+                }
             }
 
             return query;

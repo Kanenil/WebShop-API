@@ -7,8 +7,6 @@ const decoded: any =
 
 http.defaults.headers.common.Authorization = `Bearer ${localStorage?.token}`;
 
-console.log(decoded, decoded?.emailConfirmed.toLowerCase() === "true");
-
 const initState: IAuthUser = {
   isAuth: decoded != undefined,
   name: decoded?.name || "",

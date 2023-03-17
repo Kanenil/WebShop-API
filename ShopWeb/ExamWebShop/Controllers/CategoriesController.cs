@@ -14,7 +14,6 @@ namespace ExamWebShop.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = Roles.Admin)]
     public class CategoriesController : ControllerBase
     {
         private readonly AppEFContext _context;
@@ -38,6 +37,17 @@ namespace ExamWebShop.Controllers
                 .Skip((page - 1) * countOnPage)
                 .Take(countOnPage)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
+                .ToList();
+            return Ok(list);
+        }
+        [HttpGet("mainPage")]
+        public IActionResult GetCategories()
+        {
+            var list = _context.Categories
+                .Include(x=>x.Products)
+                .Where(x => !x.IsDeleted)
+                .OrderBy(x => x.Name)
+                .Select(x => _mapper.Map<CategoryMainItemViewModel>(x))
                 .ToList();
             return Ok(list);
         }
@@ -72,6 +82,7 @@ namespace ExamWebShop.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] CategoryCreateViewModel model)
         {
             var cat = _mapper.Map<CategoryEntity>(model);
@@ -81,6 +92,7 @@ namespace ExamWebShop.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Edit([FromBody] CategoryEditViewModel model)
         {
             var data = _context.Categories.SingleOrDefault(x => x.Id == model.Id);
@@ -96,6 +108,7 @@ namespace ExamWebShop.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             var data = _context.Categories.SingleOrDefault(x => x.Id == id);
