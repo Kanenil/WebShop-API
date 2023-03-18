@@ -5,7 +5,7 @@ import { ICart, ICartItem, setCart, setOpen } from "./CartReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
-import emptycart from "../../assets/empty-cart.webp";
+import emptycart from "../../assets/empty-cart.avif";
 
 export const Cart = () => {
   const { isOpen, cart } = useSelector(
@@ -95,8 +95,7 @@ export const Cart = () => {
                                   className="h-60 w-60 mb-4"
                                 />
                                 <p className="text-lg font-medium text-gray-500">
-                                  Хмм..., щось тут не так. Давайте заповнимо
-                                  корзину разом!
+                                  Ой, здається, тут порожньо! Але це ніколи не пізно виправити!
                                 </p>
                                 <Link
                                   to="/products"
@@ -133,7 +132,7 @@ export const Cart = () => {
                                           </button>
                                         </h3>
                                         <p className="ml-4">
-                                          {product.price.toLocaleString()} ₴
+                                          {(product.quantity*product.price).toLocaleString()} ₴
                                         </p>
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500">

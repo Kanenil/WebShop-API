@@ -1,12 +1,14 @@
-import { LockClosedIcon } from '@heroicons/react/20/solid'
-import { ChangeEvent, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
-import http from '../../../http'
-import logo from '../../../logo.svg'
-import { AuthActionType } from '../types'
-import { GoogleAuth } from './GoogleAuth'
-import { ILoginUser } from './types'
+import { LockClosedIcon } from "@heroicons/react/20/solid";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import http from "../../../http";
+import logo from "../../../logo.svg";
+import { GoogleAuth } from "./GoogleAuth";
+import { ILoginUser } from "./types";
+import Cookies from "js-cookie";
+import jwt from "jwt-decode";
+import { setUser } from "../AuthReducer";
 
 export const LoginPage = () => {
   const navigator = useNavigate();
@@ -14,14 +16,12 @@ export const LoginPage = () => {
 
   const [state, setState] = useState<ILoginUser>({
     email: "",
-    password: ""
+    password: "",
   });
 
   useEffect(() => {
-    if(localStorage.token != undefined)
-      navigator('/*');
-  }, [])
-  
+    if (Cookies.get("token") != undefined) navigator("/error404");
+  }, []);
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [e.target.name]: e.target.value });
@@ -30,37 +30,44 @@ export const LoginPage = () => {
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if(state.email && state.password)
-    {
-        http
-        .post("/api/auth/login", state)
-        .then((resp) => {
-          const { token } = resp.data;
-        localStorage.setItem("token", token);
+    if (state.email && state.password) {
+      http.post("/api/auth/login", state).then((resp) => {
+        const { token } = resp.data;
+        const decodedToken = jwt(token) as any;
+        const expirationDate = new Date(decodedToken.exp * 1000);
+        Cookies.set("token", token, { expires: expirationDate });
         http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        dispatch({type: AuthActionType.USER_LOGIN});
-          navigator("/");
-        });
-        
+        dispatch(
+          setUser({
+            isAuth: true,
+            name: decodedToken?.name,
+            email: decodedToken?.email,
+            image: decodedToken?.image,
+            roles: decodedToken?.roles,
+            emailConfirmed:
+              decodedToken?.emailConfirmed.toLowerCase() === "true"
+          })
+        );
+        navigator("/");
+      });
     }
-  }
+  };
 
   return (
     <>
       <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <img
-              className="mx-auto h-12 w-auto"
-              src={logo}
-              alt="logo"
-            />
+            <img className="mx-auto h-12 w-auto" src={logo} alt="logo" />
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
               Увійти в аккаунт
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Або{' '}
-              <Link to="/auth/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+              Або{" "}
+              <Link
+                to="/auth/register"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 зареєструвати новий
               </Link>
             </p>
@@ -110,13 +117,19 @@ export const LoginPage = () => {
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
                   Запам'ятати
                 </label>
               </div>
 
               <div className="text-sm mt-3 ml-2 md:mt-0">
-                <Link to="/auth/forgotpassword" className="font-medium text-indigo-600 hover:text-indigo-500">
+                <Link
+                  to="/auth/forgotpassword"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
                   Забули пароль?
                 </Link>
               </div>
@@ -128,21 +141,23 @@ export const LoginPage = () => {
                 className="group relative flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <LockClosedIcon className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+                  <LockClosedIcon
+                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
+                    aria-hidden="true"
+                  />
                 </span>
                 Увійти
               </button>
             </div>
 
-            <hr className="h-px my-8 bg-indigo-200 border-0 dark:bg-indigo-700"/>
+            <hr className="h-px my-8 bg-indigo-200 border-0 dark:bg-indigo-700" />
 
             <div className="flex justify-center">
-              <GoogleAuth/>
+              <GoogleAuth />
             </div>
-
           </form>
         </div>
       </div>
     </>
-  )
-}
+  );
+};

@@ -7,6 +7,9 @@ import logo from "../../../logo.svg";
 import { GoogleAuth } from "../login/GoogleAuth";
 import { AuthActionType } from "../types";
 import { IRegisterUser } from "./types";
+import Cookies from "js-cookie";
+import jwt from "jwt-decode";
+import { setUser } from "../AuthReducer";
 
 export const RegisterPage = () => {
   const navigator = useNavigate();
@@ -21,8 +24,7 @@ export const RegisterPage = () => {
   });
 
   useEffect(() => {
-    if(localStorage.token != undefined)
-      navigator('/*');
+    if (Cookies.get("token") != undefined) navigator("/error404");
   }, [])
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,9 +40,21 @@ export const RegisterPage = () => {
         .post("/api/auth/register", state)
         .then((resp) => {
           const { token } = resp.data;
-        localStorage.setItem("token", token);
-        http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        dispatch({type: AuthActionType.USER_LOGIN});
+          const decodedToken = jwt(token) as any;
+          const expirationDate = new Date(decodedToken.exp * 1000);
+          Cookies.set("token", token, { expires: expirationDate });
+          http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          dispatch(
+            setUser({
+              isAuth: true,
+              name: decodedToken?.name,
+              email: decodedToken?.email,
+              image: decodedToken?.image,
+              roles: decodedToken?.roles,
+              emailConfirmed:
+                decodedToken?.emailConfirmed.toLowerCase() === "true",
+            })
+          );
           navigator("/");
         });
         

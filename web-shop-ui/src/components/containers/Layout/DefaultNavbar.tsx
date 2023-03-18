@@ -8,19 +8,13 @@ import {
 } from "@headlessui/react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import {
-  ArrowPathIcon,
   Bars3Icon,
   ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
   ShoppingCartIcon,
-  SquaresPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
   ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import logo from "../../../logo.svg";
 import { IAuthUser } from "../../auth/types";
@@ -55,17 +49,18 @@ export function Header() {
 
   const [categories, setCategories] = useState<ICategoryItem[]>([]);
 
-useEffect(() => {
-  http.get('/api/categories', {
-    params: {
-      'page': 1,
-      'countOnPage':5
-    }
-  }).then(resp=>{
-    setCategories(resp.data);
-  })
-}, [])
-
+  useEffect(() => {
+    http
+      .get("/api/categories", {
+        params: {
+          page: 1,
+          countOnPage: 5,
+        },
+      })
+      .then((resp) => {
+        setCategories(resp.data);
+      });
+  }, []);
 
   function handleKeyPress(event: any) {
     if (event.key === "Enter") {
@@ -73,6 +68,7 @@ useEffect(() => {
         "/products?page=1" +
           (event.target.value ? "&search=" + event.target.value : "")
       );
+      event.target.value = "";
     }
   }
 
@@ -85,7 +81,7 @@ useEffect(() => {
         >
           <div className="flex lg:flex-1">
             <Link to="/" className="-m-1.5 p-1.5">
-              <img className="h-8 w-auto" src={logo} alt="logo" />
+              <img className="h-12 w-auto" src={logo} alt="logo" />
             </Link>
           </div>
           <div className="flex lg:hidden">
@@ -119,19 +115,42 @@ useEffect(() => {
               >
                 <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-72 max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                   <div className="p-4">
+                    <div className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
+                      <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                        <ChartPieIcon
+                          className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div className="flex-auto">
+                        <Link
+                          to={"/categories"}
+                          className="block font-semibold text-gray-900"
+                        >
+                          Всі категорії
+                          <span className="absolute inset-0" />
+                        </Link>
+                      </div>
+                    </div>
                     {categories.map((item) => (
                       <div
                         key={item.name}
                         className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
                       >
                         <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                          <img className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                          <img
+                            className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
                             aria-hidden="true"
-                            src={APP_ENV.IMAGE_PATH+"100x100_"+item.image}/>
+                            src={APP_ENV.IMAGE_PATH + "100x100_" + item.image}
+                          />
                         </div>
                         <div className="flex-auto">
                           <Link
-                            to={"/products?page=1&search=Категорія:\""+item.name+'\"'}
+                            to={
+                              '/products?page=1&search=Категорія:"' +
+                              item.name +
+                              '"'
+                            }
                             className="block font-semibold text-gray-900"
                           >
                             {item.name}
@@ -140,23 +159,6 @@ useEffect(() => {
                         </div>
                       </div>
                     ))}
-                    <div
-                        className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
-                      >
-                        <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                          <ChartPieIcon className="h-6 w-6 text-gray-600 group-hover:text-indigo-600"
-                            aria-hidden="true"/>
-                        </div>
-                        <div className="flex-auto">
-                          <Link
-                            to={"/categories"}
-                            className="block font-semibold text-gray-900"
-                          >
-                            Всі категорії
-                            <span className="absolute inset-0" />
-                          </Link>
-                        </div>
-                      </div>
                   </div>
                 </Popover.Panel>
               </Transition>
@@ -301,11 +303,24 @@ useEffect(() => {
                           />
                         </Disclosure.Button>
                         <Disclosure.Panel className="mt-2 space-y-2">
+                          <Disclosure.Button
+                            as="a"
+                            onClick={() => navigator("/categories")}
+                            className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                          >
+                            Всі категорії
+                          </Disclosure.Button>
                           {[...categories].map((item) => (
                             <Disclosure.Button
                               key={item.name}
                               as="a"
-                              onClick={()=>navigator("/products?page=1&search=Категорія:\""+item.name+'\"')}
+                              onClick={() =>
+                                navigator(
+                                  '/products?page=1&search=Категорія:"' +
+                                    item.name +
+                                    '"'
+                                )
+                              }
                               className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                             >
                               {item.name}

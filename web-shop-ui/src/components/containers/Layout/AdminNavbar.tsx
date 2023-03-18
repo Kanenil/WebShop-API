@@ -16,7 +16,7 @@ import { APP_ENV } from "../../../env";
 const navigation = [
   { name: "Головна", href: "/control-panel", current: false },
   { name: "Категорії", href: "/control-panel/categories", current: false },
-  { name: "Продукти", href: "/control-panel/products", current: false },
+  { name: "Товари", href: "/control-panel/products", current: false },
   { name: "Користувачі", href: "/control-panel/users", current: false },
   { name: "Замовлення", href: "/control-panel/orders", current: false },
 ];
@@ -62,7 +62,7 @@ export default function AdminNavbar() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img className="h-8 w-8" src={logo} alt="Your Company" />
+                      <img className="h-12 w-auto" src={logo} alt="Your Company" />
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">

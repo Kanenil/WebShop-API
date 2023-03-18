@@ -85,25 +85,25 @@ namespace ExamWebShop.Controllers
 
             return Ok(list);
         }
-
+        //Зробити видалення запиту при виборі категорії на фронті!
         private IQueryable<ProductEntity> CreateSearchQuery(IQueryable<ProductEntity> query, string search)
         {
             if(string.IsNullOrEmpty(search))
                 return query;
 
-            List<string> array = new List<string>();
+            List<string> array = new();
 
             string remainingString = search.Trim();
 
             while (remainingString.Length > 0)
             {
-                Regex categoryRegex = new Regex(@"Категорія:""([^""]+)""");
+                Regex categoryRegex = new(@"Категорія:""([^""]+)""");
                 Match categoryMatch = categoryRegex.Match(remainingString);
 
                 if (categoryMatch.Success)
                 {
                     array.Add(categoryMatch.Groups[0].Value);
-                    remainingString = categoryRegex.Replace(remainingString, "");
+                    remainingString = remainingString.Replace(categoryMatch.Groups[0].Value, "");
                 }
                 else
                 {

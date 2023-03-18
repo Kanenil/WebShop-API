@@ -1,11 +1,13 @@
 import jwt from "jwt-decode";
 import http from "../../http";
+import Cookies from "js-cookie";
 import { AuthActionType, IAuthUser } from "./types";
 
-const decoded: any =
-  localStorage.token != undefined ? jwt(localStorage?.token) : undefined;
+const savedToken = Cookies.get("token");
 
-http.defaults.headers.common.Authorization = `Bearer ${localStorage?.token}`;
+const decoded: any = savedToken != undefined ? jwt(savedToken) : undefined;
+
+http.defaults.headers.common.Authorization = `Bearer ${savedToken}`;
 
 const initState: IAuthUser = {
   isAuth: decoded != undefined,
@@ -18,29 +20,23 @@ const initState: IAuthUser = {
 
 export const AuthReducer = (state = initState, action: any) => {
   switch (action.type) {
-    case AuthActionType.USER_LOGIN:
-      const dec: any = jwt(localStorage?.token);
-      console.log(dec);
-      
+    case AuthActionType.SET_USER:
       return {
         ...state,
-        isAuth: true,
-        name: dec?.name,
-        email: dec?.email,
-        image: dec?.image,
-        roles: dec?.roles,
-        emailConfirmed: dec?.emailConfirmed.toLowerCase() === "true",
-      };
-    case AuthActionType.USER_LOGOUT:
-      return {
-        ...state,
-        isAuth: false,
-        name: "",
-        email: "",
-        image: "",
-        roles: "",
-        emailConfirmed: false,
+        isAuth: action.payload.isAuth,
+        name: action.payload.name,
+        email: action.payload.email,
+        image: action.payload.image,
+        roles: action.payload.roles,
+        emailConfirmed: action.payload.emailConfirmed,
       };
   }
   return state;
+};
+
+export const setUser = (user: IAuthUser) => {
+  return {
+    type: AuthActionType.SET_USER,
+    payload: user,
+  };
 };

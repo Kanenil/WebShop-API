@@ -9,5 +9,6 @@ export interface IAuthUser {
 
 export enum AuthActionType {
     USER_LOGIN="USER_LOGIN_ACTION",
-    USER_LOGOUT="USER_LOGOUT_ACTION"
+    USER_LOGOUT="USER_LOGOUT_ACTION",
+    SET_USER="USER_SET_ACTION"
 }

@@ -167,11 +167,11 @@ export const ProductsListPage = () => {
                               as="h3"
                               className="text-base font-semibold leading-6 text-gray-900"
                             >
-                              Видалити продукт?
+                              Видалити товар?
                             </Dialog.Title>
                             <div className="mt-2">
                               <p className="text-sm text-gray-500">
-                                Ви дійсно хочете видалити цей продукт? Ви будете
+                                Ви дійсно хочете видалити цей товар? Ви будете
                                 мати можливість відновити ці дані в майбутньому.
                               </p>
                             </div>

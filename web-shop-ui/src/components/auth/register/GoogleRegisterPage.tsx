@@ -1,18 +1,21 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import jwt from "jwt-decode";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { IGoogleJWT, IGoogleRegisterUser } from "./types";
 import { useDispatch } from "react-redux";
 import { LinkIcon } from "@heroicons/react/20/solid";
 import logo from "../../../logo.svg";
 import http from "../../../http";
-import { AuthActionType } from "../types";
+import Cookies from "js-cookie";
+import jwt from "jwt-decode";
+import { setUser } from "../AuthReducer";
 
 export const GoogleRegisterPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
 
-  let { token } = useParams();
+  const [searchParams]  = useSearchParams();
+
+  const token = searchParams.get('token');
 
   const [state, setState] = useState<IGoogleRegisterUser>({
     firstName: "",
@@ -22,6 +25,7 @@ export const GoogleRegisterPage = () => {
   });
 
   useEffect(() => {
+    if (Cookies.get("token") != undefined) navigator("/error404");
     const decodeJWT = jwt<IGoogleJWT>(token as string);
     setState({
       firstName: decodeJWT.given_name,
@@ -44,9 +48,21 @@ export const GoogleRegisterPage = () => {
         .post("/api/auth/google/register", state)
         .then((resp) => {
           const { token } = resp.data;
-        localStorage.setItem("token", token);
-        http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        dispatch({type: AuthActionType.USER_LOGIN});
+          const decodedToken = jwt(token) as any;
+          const expirationDate = new Date(decodedToken.exp * 1000);
+          Cookies.set("token", token, { expires: expirationDate });
+          http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          dispatch(
+            setUser({
+              isAuth: true,
+              name: decodedToken?.name,
+              email: decodedToken?.email,
+              image: decodedToken?.image,
+              roles: decodedToken?.roles,
+              emailConfirmed:
+                decodedToken?.emailConfirmed.toLowerCase() === "true",
+            })
+          );
           navigator("/");
         });
         

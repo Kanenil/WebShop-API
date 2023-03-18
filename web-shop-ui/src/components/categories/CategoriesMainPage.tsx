@@ -4,6 +4,7 @@ import noimage from "../../assets/no-image.webp";
 import { APP_ENV } from "../../env";
 import { Link } from "react-router-dom";
 import { ICategoryMenu } from "./types";
+import React from "react";
 
 export const CategoriesMainPage = () => {
   const [categories, setCategories] = useState<Array<ICategoryMenu>>([]);

@@ -2,7 +2,9 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import http from "../../http";
-import { AuthActionType } from "../auth/types";
+import Cookies from "js-cookie";
+import jwt from "jwt-decode";
+import { setUser } from "../auth/AuthReducer";
 
 interface ConfirmEmail {
   userId: string | null;
@@ -23,9 +25,21 @@ export const ConfirmEmailPage = () => {
       .post("/api/account/confirmEmail", value)
       .then((resp) => {
         const { token } = resp.data;
-        localStorage.setItem("token", token);
+        const decodedToken = jwt(token) as any;
+        const expirationDate = new Date(decodedToken.exp * 1000);
+        Cookies.set("token", token, { expires: expirationDate });
         http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        dispatch({ type: AuthActionType.USER_LOGIN });
+        dispatch(
+          setUser({
+            isAuth: true,
+            name: decodedToken?.name,
+            email: decodedToken?.email,
+            image: decodedToken?.image,
+            roles: decodedToken?.roles,
+            emailConfirmed:
+              decodedToken?.emailConfirmed.toLowerCase() === "true",
+          })
+        );
       })
       .catch((resp) => {
         navigator("/profile");

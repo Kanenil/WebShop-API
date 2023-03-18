@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { AuthActionType, IAuthUser } from "../auth/types";
+import { IAuthUser } from "../auth/types";
 import noimage from "../../assets/no-image.webp";
 import { APP_ENV } from "../../env";
 import { useState } from "react";
@@ -8,6 +8,9 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { Notification } from "../helpers/Notification";
+import Cookies from "js-cookie";
+import jwt from "jwt-decode";
+import { setUser } from "../auth/AuthReducer";
 
 interface IChangeInformation {
   image: boolean;
@@ -104,9 +107,7 @@ export const ProfilePage = () => {
         })
         .then((resp) => {
           const { token } = resp.data;
-          localStorage.setItem("token", token);
-          http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          dispatch({ type: AuthActionType.USER_LOGIN });
+          saveToken(token);
         });
       setChangeStatus({ ...changeStatus, name: false });
     }
@@ -125,12 +126,27 @@ export const ProfilePage = () => {
         })
         .then((resp) => {
           const { token } = resp.data;
-          localStorage.setItem("token", token);
-          http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          dispatch({ type: AuthActionType.USER_LOGIN });
+          saveToken(token);
         });
       setChangeStatus({ ...changeStatus, lastname: false });
     }
+  };
+
+  const saveToken = (token: string) => {
+    const decodedToken = jwt(token) as any;
+    const expirationDate = new Date(decodedToken.exp * 1000);
+    Cookies.set("token", token, { expires: expirationDate });
+    http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    dispatch(
+      setUser({
+        isAuth: true,
+        name: decodedToken?.name,
+        email: decodedToken?.email,
+        image: decodedToken?.image,
+        roles: decodedToken?.roles,
+        emailConfirmed: decodedToken?.emailConfirmed.toLowerCase() === "true",
+      })
+    );
   };
 
   const onSaveImage = () => {
@@ -152,9 +168,7 @@ export const ProfilePage = () => {
             })
             .then((resp) => {
               const { token } = resp.data;
-              localStorage.setItem("token", token);
-              http.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-              dispatch({ type: AuthActionType.USER_LOGIN });
+              saveToken(token);
             });
         });
     }
@@ -163,21 +177,39 @@ export const ProfilePage = () => {
   };
 
   const onConfirmEmail = () => {
-    http.get("/api/account/confirmEmail").then(resp=>{
-      handleShowNotification("Надіслано лист на пошту з підтвердженням!", "success");
-    }).catch(error=>{
-      handleShowNotification("Помилка при надіслано листа на пошту!", "error");
-    })
+    http
+      .get("/api/account/confirmEmail")
+      .then((resp) => {
+        handleShowNotification(
+          "Надіслано лист на пошту з підтвердженням!",
+          "success"
+        );
+      })
+      .catch((error) => {
+        handleShowNotification(
+          "Помилка при надіслано листа на пошту!",
+          "error"
+        );
+      });
   };
 
   const onChangePassword = () => {
-    http.post("/api/account/forgotPassword", {
-      email: user.email,
-    }).then(resp=>{
-      handleShowNotification("Надіслано лист на пошту з зміною пароля!", "success");
-    }).catch(error=>{
-      handleShowNotification("Помилка при надіслано листа на пошту!", "error");
-    });
+    http
+      .post("/api/account/forgotPassword", {
+        email: user.email,
+      })
+      .then((resp) => {
+        handleShowNotification(
+          "Надіслано лист на пошту з зміною пароля!",
+          "success"
+        );
+      })
+      .catch((error) => {
+        handleShowNotification(
+          "Помилка при надіслано листа на пошту!",
+          "error"
+        );
+      });
   };
 
   return (
@@ -233,8 +265,8 @@ export const ProfilePage = () => {
               type="file"
               id="image"
               name="image"
-              accept="image/*"
-              className="hidden border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              accept="image/jpg, image/jpeg, image/png"
+              className="hidden"
               onChange={handleFileChange}
             />
 

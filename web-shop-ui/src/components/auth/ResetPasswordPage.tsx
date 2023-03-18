@@ -3,7 +3,8 @@ import { Formik, Field, ErrorMessage, Form } from "formik";
 import http from "../../http";
 import logo from "../../logo.svg";
 import { useDispatch } from "react-redux";
-import { AuthActionType } from "./types";
+import Cookies from "js-cookie";
+import { setUser } from "./AuthReducer";
 
 interface ForgotPasswordForm {
   userId: string | null;
@@ -27,12 +28,20 @@ export const ResetPasswordPage = () => {
 
   const onSubmitHandler = (values: ForgotPasswordForm) => {
     http.post("/api/account/changepassword", values).then((resp) => {
-      if(localStorage.getItem("token"))
-      {
-        localStorage.removeItem("token");
-        dispatch({type: AuthActionType.USER_LOGOUT});
+      if (Cookies.get("token")) {
+        Cookies.remove("token");
+        dispatch(
+          setUser({
+            isAuth: false,
+            name: "",
+            email: "",
+            image: "",
+            roles: "",
+            emailConfirmed: false,
+          })
+        );
       }
-        
+
       navigator("/auth/login");
     });
   };
