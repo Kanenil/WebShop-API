@@ -7,22 +7,22 @@ import LoginPage from "./components/auth/login";
 import { RegisterPage } from "./components/auth/register/RegisterPage";
 import { GoogleRegisterPage } from "./components/auth/register/GoogleRegisterPage";
 import { Logout } from "./components/auth/Logout";
-import Error404 from "./components/error";
 import AdminNavbar from "./components/containers/Layout/AdminNavbar";
 import { CategoriesListPage } from "./components/admin/categories/CategoriesListPage";
 import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
 import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
 import { ProfilePage } from "./components/profile/ProfilePage";
-import { ProductsListPage } from "./components/admin/products/ProductsListPage";
 import { CreateProductPage } from "./components/admin/products/CreateProductPage";
 import { EditProductPage } from "./components/admin/products/EditProductPage";
-import { ProductsMainPage } from "./components/products/ProductsMainPage";
 import { MainPage } from "./components/main/MainPage";
 import { ProductPage } from "./components/products/ProductPage";
 import { ForgotPasswordPage } from "./components/auth/ForgotPasswordPage";
 import { ResetPasswordPage } from "./components/auth/ResetPasswordPage";
 import { ConfirmEmailPage } from "./components/profile/ConfirmEmail";
 import { CategoriesMainPage } from "./components/categories/CategoriesMainPage";
+import ProductsMainPage from "./components/products/list";
+import { Error404 } from "./components/error/Error404";
+import ProductsListPage from "./components/admin/products/list";
 
 function App() {
   return (

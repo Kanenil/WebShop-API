@@ -8,8 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { ICart, ICartItem, setCart, setOpen } from "../helpers/CartReducer";
 import { IProduct } from "./types";
 
-
-
 export const ProductPage = () => {
   
   const [product, setProduct] = useState<IProduct>({
@@ -91,7 +89,7 @@ export const ProductPage = () => {
           <li>
             <div className="flex items-center">
               <Link
-                to={'/products?page=1&search=Категорія:"'+product?.category+'"'}
+                to={'/products?page=1&category='+product?.category}
                 className="mr-2 text-sm font-medium text-gray-900"
               >
                 {product?.category}
@@ -161,9 +159,9 @@ export const ProductPage = () => {
             <h3 className="sr-only">Опис</h3>
 
             <div
-              className="space-y-6"
+              className="prose"
               dangerouslySetInnerHTML={{ __html: product!.description }}
-            ></div>
+            />
           </div>
         </div>
       </div>

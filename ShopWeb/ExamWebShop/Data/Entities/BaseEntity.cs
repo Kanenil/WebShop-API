@@ -14,6 +14,6 @@ namespace ExamWebShop.Data.Entities
         [Key]
         public T Id { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
+        public DateTime DateCreated { get; set; } = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
     }
 }

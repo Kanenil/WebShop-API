@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { PhotoProps } from "./types";
+import { PhotoData } from "./types";
 
-export const Photo = ({ photo, onDelete }: PhotoProps) => {
+interface Props {
+  photo: PhotoData;
+  onDelete: (id: string) => void;
+}
+
+export const Photo : React.FC<Props> = ({ photo, onDelete }) => {
     const [isHovered, setIsHovered] = useState(false);
   
     return (

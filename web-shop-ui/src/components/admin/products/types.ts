@@ -13,11 +13,6 @@ export interface PhotoData {
   url: string;
 }
 
-export interface PhotoProps {
-  photo: PhotoData;
-  onDelete: (id: string) => void;
-}
-
 export type FormValues = {
   imageFile: File;
   imageUrl: string;

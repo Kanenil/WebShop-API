@@ -32,6 +32,7 @@ builder.Services.AddIdentity<UserEntity, RoleEntity>(options =>
 builder.Services.AddAutoMapper(typeof(AppMapProfile));
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<ISmtpEmailService, SmtpEmailService>();
+builder.Services.AddTransient<IProductsService, ProductsService>();
 
 var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<String>("JWTSecretKey")));
 

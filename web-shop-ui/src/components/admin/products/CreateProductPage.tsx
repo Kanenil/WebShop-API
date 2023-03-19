@@ -229,6 +229,7 @@ export const CreateProductPage = () => {
           <label className="block text-gray-700 font-bold mb-2" htmlFor="desc">
             Опис
           </label>
+          <div className="prose">
           <Editor
           id="desc"
             apiKey="embuig9iimcqnl5d9dzytl9wh9330zvstczvzz9cpgy96gju"
@@ -262,8 +263,8 @@ export const CreateProductPage = () => {
                 "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
               content_style:
                 "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-            }}
-          />
+            }}/>
+          </div>
         </div>
         <div className="flex items-center">
           <button

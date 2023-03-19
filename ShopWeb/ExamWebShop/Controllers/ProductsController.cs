@@ -3,14 +3,12 @@ using ExamWebShop.Constants;
 using ExamWebShop.Data;
 using ExamWebShop.Data.Entities;
 using ExamWebShop.Helpers;
-using ExamWebShop.Models.Categories;
+using ExamWebShop.Interfaces;
 using ExamWebShop.Models.Products;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+using System.Drawing.Printing;
 using System.Text.RegularExpressions;
 
 namespace ExamWebShop.Controllers
@@ -19,29 +17,38 @@ namespace ExamWebShop.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly AppEFContext _context;
+        private readonly IProductsService _productsService;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
-
-        public ProductsController(AppEFContext context, IMapper mapper, IConfiguration configuration)
+        public ProductsController(IProductsService productsService, IMapper mapper)
         {
-            _context = context;
+            _productsService = productsService;
             _mapper = mapper;
-            _configuration = configuration;
         }
 
         [HttpGet]
-        public IActionResult GetList(int page, string search, string sort, int countOnPage = 10)
+        public IActionResult GetList([FromQuery] ProductSearchViewModel model)
         {
-            var query = _context.Products
+            var query = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
+                .Where(x => !x.IsDeleted)
                 .AsQueryable();
 
-            query = CreateSearchQuery(query, search);
+            if (!string.IsNullOrEmpty(model.Search))
+            {
+                var searches = model.Search.Split(' ');
+                foreach (var sear in searches)
+                {
+                    query = query.Where(x => x.Name.ToLower().Contains(sear.ToLower()));
+                }
+            }
 
+            if (!string.IsNullOrEmpty(model.Category))
+            {
+                query = query.Where(x => x.Category.Name.ToLower().Contains(model.Category.ToLower()));
+            }
 
-            switch (sort)
+            switch (model.Sort)
             {
                 case Sorts.PriceLowToHigh:
                     query = query.OrderBy(x => x.Price);
@@ -59,22 +66,31 @@ namespace ExamWebShop.Controllers
                 case Sorts.Default:
                     query = query.OrderBy(x => x.Id);
                     break;
-                
             }
 
             var list = query
-                .Skip((page - 1) * countOnPage)
-                .Take(countOnPage)
+                .Skip((model.Page - 1) * model.CountOnPage)
+                .Take(model.CountOnPage)
                 .Select(x => _mapper.Map<ProductItemViewModel>(x))
                 .ToList();
-            
-            return Ok(list);
+
+            int total = query.Count();
+            int pages = (int)Math.Ceiling(total / (double)model.CountOnPage);
+
+            return Ok(new ProductSearchResultViewModel()
+            {
+                CurrentPage = model.Page,
+                Pages = pages,
+                Total = total,
+                Products = list,
+            });
         }
+
 
         [HttpGet("most-buys")]
         public IActionResult GetList(int count)
         {
-            var list = _context.Products
+            var list = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
                 .Where(x => !x.IsDeleted)
@@ -85,10 +101,76 @@ namespace ExamWebShop.Controllers
 
             return Ok(list);
         }
-        //Зробити видалення запиту при виборі категорії на фронті!
+
+        [HttpGet("count")]
+        public IActionResult GetCount(string search)
+        {
+            var query = _productsService.Products
+                .Include(x => x.Category)
+                .Include(x => x.Images.OrderBy(i => i.Priority))
+                .AsQueryable();
+
+            query = CreateSearchQuery(query, search);
+
+            var count = query.Count();
+            return Ok(count);
+        }
+        [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Create([FromBody] CreateProductViewModel model)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest();
+
+            var id = await _productsService.Create(model);
+            short index = 0;
+            foreach (var image in model.Images)
+            {
+                await _productsService.AddImage(new ProductImageEntity()
+                {
+                    Name = image,
+                    ProductId = id,
+                    Priority = ++index
+                });
+            }
+
+            return Ok();
+        }
+        [HttpGet("id/{id}")]
+        public IActionResult GetProduct(int id)
+        {
+            var model = _productsService.Products
+                .Include(x=>x.Category)
+                .Include(x => x.Images.OrderBy(i => i.Priority))
+                .SingleOrDefault(x => x.Id == id);
+            if (model == null)
+                return NotFound();
+            return Ok(_mapper.Map<ProductItemViewModel>(model));
+        }
+
+        [HttpPut]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Edit([FromBody] EditProductViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _productsService.Update(model);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> Delete(int id)
+        {         
+            await _productsService.Delete(id);
+            return Ok();
+        }
+
         private IQueryable<ProductEntity> CreateSearchQuery(IQueryable<ProductEntity> query, string search)
         {
-            if(string.IsNullOrEmpty(search))
+            if (string.IsNullOrEmpty(search))
                 return query;
 
             List<string> array = new();
@@ -133,115 +215,6 @@ namespace ExamWebShop.Controllers
             }
 
             return query;
-        }
-
-        [HttpGet("count")]
-        public IActionResult GetCount(string search)
-        {
-            var query = _context.Products
-                .Include(x => x.Category)
-                .Include(x => x.Images.OrderBy(i => i.Priority))
-                .AsQueryable();
-
-            query = CreateSearchQuery(query, search);
-
-            var count = query.Count();
-            return Ok(count);
-        }
-        [HttpPost]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Create([FromBody] CreateProductViewModel model)
-        {
-            var prod = _mapper.Map<ProductEntity>(model);
-            _context.Products.Add(prod);
-            await _context.SaveChangesAsync();
-            short index = 0;
-            foreach (var image in model.Images)
-            {
-                _context.ProductImages.Add(new ProductImageEntity()
-                {
-                    Name = image,
-                    ProductId = prod.Id,
-                    Priority = ++index
-                });
-            }
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-        [HttpGet("id/{id}")]
-        public IActionResult GetProduct(int id)
-        {
-            var model = _context.Products
-                .Include(x=>x.Category)
-                .Include(x => x.Images.OrderBy(i => i.Priority))
-                .SingleOrDefault(x => x.Id == id);
-            if (model == null)
-                return NotFound();
-            return Ok(_mapper.Map<ProductItemViewModel>(model));
-        }
-
-        [HttpPut]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Edit([FromBody] EditProductViewModel model)
-        {
-            var data = _context.Products
-                .Include(x => x.Images.OrderBy(i => i.Priority))
-                .SingleOrDefault(x => x.Id == model.Id);
-
-            foreach (var image in data.Images)
-            {
-                if (!model.Images.Contains(image.Name))
-                {
-                    ImageWorker.DeleteAllImages(image.Name, _configuration);
-                    _context.ProductImages.Remove(image);
-                }
-            }
-            await _context.SaveChangesAsync();
-
-            short index = 0;
-            foreach (var image in model.Images)
-            {
-                index++;
-                var imageData = _context.ProductImages.SingleOrDefault(x => x.Name == image && x.ProductId == data.Id);
-                if (imageData != null)
-                {
-                    imageData.Priority = index;
-                }
-                else
-                {
-                    _context.ProductImages.Add(new ProductImageEntity()
-                    {
-                        Name = image,
-                        ProductId = data.Id,
-                        Priority = index
-                    });
-                }
-            }
-
-            data.Name = model.Name;
-            data.Description = model.Description;
-            data.Price = model.Price;
-            data.CategoryId = model.CategoryId;
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var data = _context.Products.Include(x=>x.Images).SingleOrDefault(x => x.Id == id);
-
-            foreach (var image in data.Images)
-                if (!String.IsNullOrEmpty(image.Name))
-                    ImageWorker.DeleteAllImages(image.Name, _configuration);
-
-            _context.ProductImages.RemoveRange(data.Images);
-            _context.Products.Remove(data);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
     }
 }
