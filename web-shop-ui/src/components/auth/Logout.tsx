@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { setUser } from "./AuthReducer";
+import { setCart } from "../common/basket/CartReducer";
 
 export const Logout = () => {
   const navigator = useNavigate();
@@ -11,6 +12,7 @@ export const Logout = () => {
   useEffect(() => {
     if (Cookies.get("token")) {
       Cookies.remove("token");
+      localStorage.setItem("cart", JSON.stringify([]));
       dispatch(
         setUser({
           isAuth: false,
@@ -20,6 +22,9 @@ export const Logout = () => {
           roles: "",
           emailConfirmed: false,
         })
+      );
+      dispatch(
+        setCart([])
       );
     }
     navigator("/");

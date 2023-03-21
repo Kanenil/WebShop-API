@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { APP_ENV } from "../../env";
 import http from "../../http";
-import { IProductTableItem } from "../admin/products/types";
 import noimage from "../../assets/no-image.webp";
+import { IProduct } from "../products/types";
 
 function validateURL(url: string) {
     return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
@@ -12,7 +12,7 @@ function validateURL(url: string) {
   }
 
 export const MainPage = () => {
-    const [products, setProducts] = useState<Array<IProductTableItem>>([]);
+    const [products, setProducts] = useState<Array<IProduct>>([]);
 
     useEffect(() => {
   
@@ -57,9 +57,20 @@ export const MainPage = () => {
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">{product.category}</p>
                   </div>
-                  <p className="text-sm font-medium text-gray-900">
-                    {product.price.toLocaleString()} ₴
-                  </p>
+                  {product.decreasePercent?(
+            <div>
+            <p className="text-xs tracking-tight text-gray-900 line-through">
+            {product?.price.toLocaleString()} ₴
+          </p>
+          <p className="text-sm font-medium text-red-500">
+            {(parseFloat(product?.price) - (parseFloat(product?.price) * parseFloat(product?.decreasePercent))/100).toLocaleString()} ₴
+          </p>
+            </div>
+          ):(
+<p className="text-sm font-medium text-gray-900">
+            {product?.price.toLocaleString()} ₴
+          </p>
+          )}
                 </div>
               </div>
             ))}

@@ -100,7 +100,7 @@ export const ProfilePage = () => {
       editUser.name.toLowerCase() != user.name.split(" ")[0].toLowerCase()
     ) {
       http
-        .post("/api/account", {
+        .put("/api/account", {
           firstName: editUser.name,
           lastName: user.name.split(" ")[1],
           image: user.image,
@@ -119,7 +119,7 @@ export const ProfilePage = () => {
       editUser.lastname.toLowerCase() != user.name.split(" ")[1].toLowerCase()
     ) {
       http
-        .post("/api/account", {
+        .put("/api/account", {
           firstName: user.name.split(" ")[0],
           lastName: editUser.lastname,
           image: user.image,
@@ -161,7 +161,7 @@ export const ProfilePage = () => {
         })
         .then((resp) => {
           http
-            .post("/api/account", {
+            .put("/api/account", {
               firstName: user.name.split(" ")[0],
               lastName: user.name.split(" ")[1],
               image: resp.data!.image,

@@ -17,6 +17,7 @@ namespace ExamWebShop.Data
         public DbSet<ProductImageEntity> ProductImages => Set<ProductImageEntity>();
         public DbSet<SaleEntity> Sales => Set<SaleEntity>();
         public DbSet<SaleProductEntity> SaleProducts => Set<SaleProductEntity>();
+        public DbSet<BasketEntity> Baskets => Set<BasketEntity>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -38,6 +39,10 @@ namespace ExamWebShop.Data
             builder.Entity<SaleProductEntity>(sales =>
             {
                 sales.HasKey(b => new { b.SaleId, b.ProductId });
+            });
+            builder.Entity<BasketEntity>(basket =>
+            {
+                basket.HasKey(b => new { b.UserId, b.ProductId });
             });
         }
     }

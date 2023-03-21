@@ -35,6 +35,7 @@ builder.Services.AddScoped<ISmtpEmailService, SmtpEmailService>();
 builder.Services.AddTransient<IProductsService, ProductsService>();
 builder.Services.AddTransient<ICategoriesService, CategoriesService>();
 builder.Services.AddTransient<ISalesService, SalesService>();
+builder.Services.AddTransient<IAccountService, AccountService>();
 
 var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<String>("JWTSecretKey")));
 

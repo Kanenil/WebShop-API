@@ -3,10 +3,11 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { APP_ENV } from "../../env";
 import http from "../../http";
 import Carousel from "../helpers/Carousel";
-import noimage from "../../assets/no-image.webp";
 import { useDispatch, useSelector } from "react-redux";
-import { ICart, ICartItem, setCart, setOpen } from "../helpers/CartReducer";
 import { IProduct } from "./types";
+import { ICart, ICartItem } from "../common/basket/types";
+import { setCart, setOpen } from "../common/basket/CartReducer";
+import Cookies from "js-cookie";
 
 export const ProductPage = () => {
   
@@ -40,13 +41,17 @@ export const ProductPage = () => {
           name: product.name,
           category: product.category,
           price: parseInt(product.price || "0"),
-          image: product.images[0]
-            ? APP_ENV.IMAGE_PATH + "300x300_" + product.images[0]
-            : noimage,
+          image: product.images[0],
           quantity: 1,
           decreasePercent: parseInt(product.decreasePercent || "0"),
         },
       ];
+      if (Cookies.get("token")) {
+        http.put("/api/account/basket", {
+          productId: id,
+          count: 1,
+        });
+      }
       dispatch(setCart(updatedCart));
     }
   };

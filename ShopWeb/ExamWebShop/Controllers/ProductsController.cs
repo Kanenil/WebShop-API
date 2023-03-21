@@ -31,7 +31,7 @@ namespace ExamWebShop.Controllers
             var query = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
-                .Include(x => x.SaleProducts)
+                .Include(x => x.SaleProducts.OrderByDescending(x => x.Sale.DecreasePercent))
                 .ThenInclude(x=>x.Sale)
                 .Where(x => !x.IsDeleted)
                 .AsQueryable();
@@ -95,6 +95,8 @@ namespace ExamWebShop.Controllers
             var list = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
+                .Include(x => x.SaleProducts.OrderByDescending(x => x.Sale.DecreasePercent))
+                .ThenInclude(x => x.Sale)
                 .Where(x => !x.IsDeleted)
                 .OrderBy(x => x.Id)
                 .Take(count)
@@ -159,53 +161,5 @@ namespace ExamWebShop.Controllers
             return Ok();
         }
 
-        private IQueryable<ProductEntity> CreateSearchQuery(IQueryable<ProductEntity> query, string search)
-        {
-            if (string.IsNullOrEmpty(search))
-                return query;
-
-            List<string> array = new();
-
-            string remainingString = search.Trim();
-
-            while (remainingString.Length > 0)
-            {
-                Regex categoryRegex = new(@"Категорія:""([^""]+)""");
-                Match categoryMatch = categoryRegex.Match(remainingString);
-
-                if (categoryMatch.Success)
-                {
-                    array.Add(categoryMatch.Groups[0].Value);
-                    remainingString = remainingString.Replace(categoryMatch.Groups[0].Value, "");
-                }
-                else
-                {
-                    string[] remainingWords = remainingString.Trim().Split(' ');
-
-                    foreach (string word in remainingWords)
-                    {
-                        array.Add(word);
-                    }
-
-                    remainingString = "";
-                }
-            }
-
-            foreach (var item in array)
-            {
-                var category = Regex.Match(item, @"(?<=:)(.*)");
-                if (category.Success)
-                {
-                    string val = category.Groups[1].Value.Trim('\"');
-                    query = query.Where(x => !x.IsDeleted && x.Category.Name.ToLower().Contains(val.ToLower()));
-                }
-                else
-                {
-                    query = query.Where(x => !x.IsDeleted && x.Name.ToLower().Contains(item.ToLower()));
-                }
-            }
-
-            return query;
-        }
     }
 }

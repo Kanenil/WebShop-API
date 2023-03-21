@@ -11,9 +11,9 @@ import { IAuthUser } from "../../auth/types";
 import { useDispatch, useSelector } from "react-redux";
 import usericon from "../../../assets/user.jpg";
 import { APP_ENV } from "../../../env";
-import { Cart } from "../../helpers/Cart";
-import { setOpen } from "../../helpers/CartReducer";
 import classNames from "classnames";
+import { setOpen } from "../../common/basket/CartReducer";
+import Cart from "../../common/basket";
 
 function validateURL(url: string) {
   return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(

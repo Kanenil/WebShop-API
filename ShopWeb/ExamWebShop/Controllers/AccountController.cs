@@ -16,22 +16,14 @@ namespace ExamWebShop.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<UserEntity> _userManager;
-        private readonly AppEFContext _context;
-        private readonly IJwtTokenService _jwtTokenService;
-        private readonly ISmtpEmailService _emailService;
-        private readonly IConfiguration _configuration;
+        private readonly IAccountService _accountService;
 
-        public AccountController(UserManager<UserEntity> userManager, IJwtTokenService jwtTokenService, AppEFContext context, IConfiguration configuration, ISmtpEmailService emailService)
+        public AccountController(IAccountService accountService)
         {
-            _userManager = userManager;
-            _jwtTokenService = jwtTokenService;
-            _context = context;
-            _configuration = configuration;
-            _emailService = emailService;
+            _accountService = accountService;
         }
 
-        [HttpPost]
+        [HttpPut]
         [Authorize]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
@@ -39,18 +31,8 @@ namespace ExamWebShop.Controllers
                 return BadRequest();
 
             string email = User.Claims.First().Value;
-            var user = await _userManager.FindByEmailAsync(email);
+            var token = await _accountService.UpdateAsync(email, model);
 
-            if(!String.IsNullOrEmpty(user.Image) && !Regex.Match(user.Image, "/^(http(s):\\/\\/.)[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)$/g").Success && user.Image != model.Image)
-                ImageWorker.DeleteAllImages(user.Image, _configuration);
-
-            user.Image = model.Image;
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-
-            await _context.SaveChangesAsync();
-
-            var token = await _jwtTokenService.CreateToken(user);
             return Ok(new { token });
         }
 
@@ -59,28 +41,10 @@ namespace ExamWebShop.Controllers
         public async Task<IActionResult> ConfirmEmailSend()
         {
             string email = User.Claims.First().Value;
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if(user.EmailConfirmed)
+            
+            if(!await _accountService.SendConfirmEmailAsync(email))
                 return BadRequest();
 
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var frontendUrl = _configuration.GetValue<string>("FrontEndURL");
-
-            var callbackUrl = $"{frontendUrl}/profile/confirmemail?userId={user.Id}&" +
-                $"code={WebUtility.UrlEncode(token)}";
-
-            var dir = Path.Combine(Directory.GetCurrentDirectory(), "email-template", "confirmEmail.html");
-            var html = System.IO.File.ReadAllText(dir);
-            html = html.Replace("#", callbackUrl);
-
-            var message = new Message()
-            {
-                To = user.Email,
-                Subject = "Підтвердження електронної пошти",
-                Body = html
-            };
-            _emailService.Send(message);
             return Ok();
         }
 
@@ -88,48 +52,53 @@ namespace ExamWebShop.Controllers
         [Authorize]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailViewModel model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId);
-            var res = await _userManager.ConfirmEmailAsync(user, model.Token);
-
-            var token = await _jwtTokenService.CreateToken(user);
+            var token = await _accountService.ConfirmEmailAsync(model);
             return Ok(new { token });
         }
 
         [HttpPost("forgotPassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordViewModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
-                return NotFound();
-
-            if(!user.EmailConfirmed)
+            if (!await _accountService.SendForgotPasswordEmailAsync(model))
                 return BadRequest();
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var frontendUrl = _configuration.GetValue<string>("FrontEndURL");
-
-            var callbackUrl = $"{frontendUrl}/auth/resetpassword?userId={user.Id}&" +
-                $"code={WebUtility.UrlEncode(token)}";
-
-            var dir = Path.Combine(Directory.GetCurrentDirectory(), "email-template", "index.html");
-            var html = System.IO.File.ReadAllText(dir);
-            html = html.Replace("#", callbackUrl);
-
-            var message = new Message()
-            {
-                To = user.Email,
-                Subject = "Відновлення пароля",
-                Body = html
-            };
-            _emailService.Send(message);
             return Ok();
         }
 
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
         {
-            var user = await _userManager.FindByIdAsync(model.UserId);
-            var res = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            await _accountService.ChangePasswordAsync(model);
+            return Ok();
+        }
+        [HttpGet("basket")]
+        [Authorize]
+        public async Task<IActionResult> Basket()
+        {
+            string email = User.Claims.First().Value;
+            
+            var list = await _accountService.Basket(email);
+
+            return Ok(new { list });
+        }
+        [HttpPut("basket")]
+        [Authorize]
+        public async Task<IActionResult> AddToBasket(BasketViewModel model)
+        {
+            string email = User.Claims.First().Value;
+
+            await _accountService.AddToBasket(email, model);
+
+            return Ok();
+        }
+        [HttpDelete("basket")]
+        [Authorize]
+        public async Task<IActionResult> DeleteFromBasket(int productId)
+        {
+            string email = User.Claims.First().Value;
+
+            await _accountService.DeleteFromBasket(email, productId);
+
             return Ok();
         }
     }
