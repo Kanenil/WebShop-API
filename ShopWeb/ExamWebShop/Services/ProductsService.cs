@@ -58,7 +58,7 @@ namespace ExamWebShop.Services
                 await _context.SaveChangesAsync();
                 return data.IsDeleted;
             }
-            throw new Exception("Parameter 'entity' can not be null!");
+            throw new Exception("In 'id' found 0 entities!");
         }
 
         public async Task Update(EditProductViewModel model)

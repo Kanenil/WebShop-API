@@ -1,9 +1,10 @@
 import React from "react";
 import { IProductTableItem } from "../../admin/products/types";
+import { IProduct } from "../types";
 import { ProductItem } from "./ProductItem";
 
 interface Props {
-  products: IProductTableItem[];
+  products: IProduct[];
 }
 
 export const ProductsList: React.FC<Props> = ({ products }) => {

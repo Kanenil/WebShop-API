@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import { IProductTableItem } from "../../admin/products/types";
 import noimage from "../../../assets/no-image.webp";
+import { IProduct } from "../types";
 
 interface Props {
-  product: IProductTableItem;
+  product: IProduct;
 }
 
 export const ProductItem: React.FC<Props> = ({ product }) => {
@@ -34,9 +35,20 @@ export const ProductItem: React.FC<Props> = ({ product }) => {
           </h3>
           <p className="mt-1 text-sm text-gray-500">{product.category}</p>
         </div>
-        <p className="text-sm font-medium text-gray-900">
-          {product.price.toLocaleString()} ₴
-        </p>
+        {product.decreasePercent?(
+            <div>
+            <p className="text-xs tracking-tight text-gray-900 line-through">
+            {product?.price.toLocaleString()} ₴
+          </p>
+          <p className="text-sm font-medium text-red-500">
+            {(parseFloat(product?.price) - (parseFloat(product?.price) * parseFloat(product?.decreasePercent))/100).toLocaleString()} ₴
+          </p>
+            </div>
+          ):(
+<p className="text-sm font-medium text-gray-900">
+            {product?.price.toLocaleString()} ₴
+          </p>
+          )}
       </div>
     </div>
   );

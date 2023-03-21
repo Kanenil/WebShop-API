@@ -8,7 +8,6 @@ import { RegisterPage } from "./components/auth/register/RegisterPage";
 import { GoogleRegisterPage } from "./components/auth/register/GoogleRegisterPage";
 import { Logout } from "./components/auth/Logout";
 import AdminNavbar from "./components/containers/Layout/AdminNavbar";
-import { CategoriesListPage } from "./components/admin/categories/CategoriesListPage";
 import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
 import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
 import { ProfilePage } from "./components/profile/ProfilePage";
@@ -23,6 +22,11 @@ import { CategoriesMainPage } from "./components/categories/CategoriesMainPage";
 import ProductsMainPage from "./components/products/list";
 import { Error404 } from "./components/error/Error404";
 import ProductsListPage from "./components/admin/products/list";
+import AdminHomePage from "./components/admin/home";
+import SalesListPage from "./components/admin/sales/list";
+import CategoriesListPage from "./components/admin/categories/list";
+import CreateSalePage from "./components/admin/sales/create";
+import EditSalePage from "./components/admin/sales/edit";
 
 function App() {
   return (
@@ -52,16 +56,24 @@ function App() {
             </Route>
             <Route path="/products">
               <Route index element={<ProductsMainPage />} />
-              <Route path=":id" element={<ProductPage/>}/>
+              <Route path=":id" element={<ProductPage />} />
             </Route>
             <Route path="*" element={<Error404 />} />
           </Route>
           <Route path="/control-panel" element={<AdminNavbar />}>
+            <Route index element={<AdminHomePage />} />
             <Route path="categories">
               <Route index element={<CategoriesListPage />} />
               <Route path="create" element={<CreateCategoryPage />} />
               <Route path="edit">
                 <Route path=":id" element={<EditCategoryPage />} />
+              </Route>
+            </Route>
+            <Route path="sales">
+              <Route index element={<SalesListPage />} />
+              <Route path="create" element={<CreateSalePage />} />
+              <Route path="edit">
+                <Route path=":id" element={<EditSalePage />} />
               </Route>
             </Route>
             <Route path="products">

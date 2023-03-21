@@ -1,10 +1,12 @@
 import { IProductTableItem } from "../admin/products/types";
 
 export interface IProduct {
+  id: number;
   name: string;
   price: string;
   description: string;
   category: string;
+  decreasePercent: string;
   images: string[];
 }
 export interface IFilterItem {
@@ -30,11 +32,11 @@ export interface IProductSearch {
   search?: string;
   category?: string;
   sort?: string;
-  countOnPage?: number;
+  countOnPage?: number | string | null;
 }
 
 export interface IProductResult {
-  products: Array<IProductTableItem>;
+  products: Array<IProduct>;
   pages: number;
   currentPage: number;
   total: number;

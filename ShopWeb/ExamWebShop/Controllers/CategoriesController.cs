@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using ExamWebShop.Constants;
-using ExamWebShop.Data;
-using ExamWebShop.Data.Entities;
-using ExamWebShop.Helpers;
-using ExamWebShop.Models;
+using ExamWebShop.Interfaces;
 using ExamWebShop.Models.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing.Printing;
 
 namespace ExamWebShop.Controllers
 {
@@ -16,34 +12,47 @@ namespace ExamWebShop.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly AppEFContext _context;
+        private readonly ICategoriesService _categoriesService;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
 
-        public CategoriesController(AppEFContext context, IMapper mapper, IConfiguration configuration)
+        public CategoriesController(ICategoriesService categoriesService, IMapper mapper)
         {
-            _context = context;
+            _categoriesService = categoriesService;
             _mapper = mapper;
-            _configuration = configuration;
         }
 
         [HttpGet]
-        public IActionResult GetList(int page, string search, int countOnPage = 10)
+        public IActionResult GetList([FromQuery] CategorySearchViewModel model)
         {
-            int.TryParse(search, out int number);
-            var list = _context.Categories
-                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true))
-                .OrderBy(x => x.Id)
-                .Skip((page - 1) * countOnPage)
-                .Take(countOnPage)
+            var query = _categoriesService.Categories
+                .Where(x => !x.IsDeleted)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(model.Search))
+            {
+                query = query.Where(x => x.Name.ToLower().Contains(model.Search.ToLower()));
+            }
+
+            var list = query
+                .Skip((model.Page - 1) * model.CountOnPage)
+                .Take(model.CountOnPage)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
                 .ToList();
-            return Ok(list);
+            int total = query.Count();
+            int pages = (int)Math.Ceiling(total / (double)model.CountOnPage);
+
+            return Ok(new CategorySearchResultViewModel()
+            {
+                CurrentPage = model.Page,
+                Pages = pages,
+                Total = total,
+                Categories = list,
+            });
         }
         [HttpGet("mainPage")]
         public IActionResult GetCategories()
         {
-            var list = _context.Categories
+            var list = _categoriesService.Categories
                 .Include(x=>x.Products)
                 .Where(x => !x.IsDeleted)
                 .OrderBy(x => x.Name)
@@ -55,7 +64,7 @@ namespace ExamWebShop.Controllers
         [HttpGet("selector")]
         public IActionResult GetSelector()
         {
-            var list = _context.Categories
+            var list = _categoriesService.Categories
                 .Where(x => !x.IsDeleted)
                 .OrderBy(x => x.Id)
                 .Select(x => _mapper.Map<CategoryItemViewModel>(x))
@@ -66,28 +75,17 @@ namespace ExamWebShop.Controllers
         [HttpGet("id/{id}")]
         public IActionResult GetCategory(int id)
         {
-            var model = _context.Categories.SingleOrDefault(x => x.Id == id);
+            var model = _categoriesService.Categories.SingleOrDefault(x => x.Id == id);
             if (model == null)
                 return NotFound();
             return Ok(_mapper.Map<CategoryItemViewModel>(model));
-        }
-        [HttpGet("count")]
-        public IActionResult GetCount(string search)
-        {
-            int.TryParse(search, out int number);
-            var count = _context.Categories
-                .Where(x => !x.IsDeleted && (search != null ? (x.Name.ToLower().Contains(search.ToLower()) || x.Id == number) : true))
-                .Count();
-            return Ok(count);
         }
 
         [HttpPost]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] CategoryCreateViewModel model)
         {
-            var cat = _mapper.Map<CategoryEntity>(model);
-            _context.Categories.Add(cat);
-            await _context.SaveChangesAsync();
+            await _categoriesService.Create(model);
             return Ok();
         }
 
@@ -95,15 +93,7 @@ namespace ExamWebShop.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Edit([FromBody] CategoryEditViewModel model)
         {
-            var data = _context.Categories.SingleOrDefault(x => x.Id == model.Id);
-
-            if (!String.IsNullOrEmpty(data.Image) && data.Image != model.Image)
-                ImageWorker.DeleteAllImages(data.Image, _configuration);
-
-            data.Image = model.Image;
-            data.Name = model.Name;
-            await _context.SaveChangesAsync();
-
+            await _categoriesService.Update(model);
             return Ok();
         }
 
@@ -111,14 +101,7 @@ namespace ExamWebShop.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = _context.Categories.SingleOrDefault(x => x.Id == id);
-
-            if (!String.IsNullOrEmpty(data.Image))
-                ImageWorker.DeleteAllImages(data.Image, _configuration);
-
-            _context.Categories.Remove(data);
-            await _context.SaveChangesAsync();
-
+            await _categoriesService.Delete(id);
             return Ok();
         }
     }

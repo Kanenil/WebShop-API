@@ -15,7 +15,9 @@ export const ProductPage = () => {
     price: "",
     description: "",
     category: "",
+    decreasePercent: "",
     images: [],
+    id: 1
   });
 
   const {cart} = useSelector((store: any) => store.shoppingCart as ICart);
@@ -42,6 +44,7 @@ export const ProductPage = () => {
             ? APP_ENV.IMAGE_PATH + "300x300_" + product.images[0]
             : noimage,
           quantity: 1,
+          decreasePercent: parseInt(product.decreasePercent || "0"),
         },
       ];
       dispatch(setCart(updatedCart));
@@ -129,9 +132,23 @@ export const ProductPage = () => {
         </div>
 
         <div className="mt-4 lg:row-span-3 lg:mt-0">
-          <p className="text-3xl tracking-tight text-gray-900">
+
+          {product.decreasePercent?(
+            <>
+            <p className="text-lg tracking-tight text-gray-900 line-through">
             {product?.price.toLocaleString()} ₴
           </p>
+          <p className="text-3xl tracking-tight text-red-500">
+            {(parseFloat(product?.price) - (parseFloat(product?.price) * parseFloat(product?.decreasePercent))/100).toLocaleString()} ₴
+          </p>
+            </>
+          ):(
+<p className="text-3xl tracking-tight text-gray-900">
+            {product?.price.toLocaleString()} ₴
+          </p>
+          )}
+
+          
 
           {cart.findIndex(
             (cartItem: ICartItem) => cartItem.id === parseInt(id || "0")
@@ -149,7 +166,7 @@ export const ProductPage = () => {
               onClick={()=>dispatch(setOpen(true))}
               className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 py-3 px-8 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              В кошику
+              В корзині
             </button>
           )}
         </div>

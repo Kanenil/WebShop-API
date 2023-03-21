@@ -14,9 +14,10 @@ import usericon from "../../../assets/user.jpg";
 import { APP_ENV } from "../../../env";
 
 const navigation = [
-  { name: "Головна", href: "/control-panel", current: false },
+  { name: "Оновлення", href: "/control-panel", current: false },
   { name: "Категорії", href: "/control-panel/categories", current: false },
   { name: "Товари", href: "/control-panel/products", current: false },
+  { name: "Акції", href: "/control-panel/sales", current: false },
   { name: "Користувачі", href: "/control-panel/users", current: false },
   { name: "Замовлення", href: "/control-panel/orders", current: false },
 ];

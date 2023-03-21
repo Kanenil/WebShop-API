@@ -241,6 +241,60 @@ namespace ExamWebShop.Migrations
                     b.ToTable("tblProductImages");
                 });
 
+            modelBuilder.Entity("ExamWebShop.Data.Entities.SaleEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DecreasePercent")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTime>("ExpireTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tblSales");
+                });
+
+            modelBuilder.Entity("ExamWebShop.Data.Entities.SaleProductsEntity", b =>
+                {
+                    b.Property<int>("SaleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SaleId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("tblSaleProducts");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -355,7 +409,7 @@ namespace ExamWebShop.Migrations
             modelBuilder.Entity("ExamWebShop.Data.Entities.ProductEntity", b =>
                 {
                     b.HasOne("ExamWebShop.Data.Entities.CategoryEntity", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -372,6 +426,25 @@ namespace ExamWebShop.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ExamWebShop.Data.Entities.SaleProductsEntity", b =>
+                {
+                    b.HasOne("ExamWebShop.Data.Entities.ProductEntity", "Product")
+                        .WithMany("SaleProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamWebShop.Data.Entities.SaleEntity", "Sale")
+                        .WithMany("SaleProducts")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -410,6 +483,11 @@ namespace ExamWebShop.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ExamWebShop.Data.Entities.CategoryEntity", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("ExamWebShop.Data.Entities.Identity.RoleEntity", b =>
                 {
                     b.Navigation("UserRoles");
@@ -423,6 +501,13 @@ namespace ExamWebShop.Migrations
             modelBuilder.Entity("ExamWebShop.Data.Entities.ProductEntity", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("SaleProducts");
+                });
+
+            modelBuilder.Entity("ExamWebShop.Data.Entities.SaleEntity", b =>
+                {
+                    b.Navigation("SaleProducts");
                 });
 #pragma warning restore 612, 618
         }

@@ -95,7 +95,8 @@ export const Cart = () => {
                                   className="h-60 w-60 mb-4"
                                 />
                                 <p className="text-lg font-medium text-gray-500">
-                                  Ой, здається, тут порожньо! Але це ніколи не пізно виправити!
+                                  Ой, здається, тут порожньо! Але це ніколи не
+                                  пізно виправити!
                                 </p>
                                 <Link
                                   to="/products"
@@ -131,9 +132,29 @@ export const Cart = () => {
                                               : product.name}
                                           </button>
                                         </h3>
-                                        <p className="ml-4">
-                                          {(product.quantity*product.price).toLocaleString()} ₴
-                                        </p>
+                                        {product.decreasePercent ? (
+                                          <div>
+                                            <p className="ml-4 text-sm line-through">
+                                            {(
+                                              product.quantity * product.price
+                                            ).toLocaleString()}{" "}
+                                            ₴
+                                          </p>
+                                          <p className="ml-4 text-red-500">
+                                            {(
+                                              (product.quantity * product.price) - (((product.price*product.decreasePercent)/100)*product.quantity)
+                                            ).toLocaleString()}{" "}
+                                            ₴
+                                          </p>
+                                          </div>
+                                        ) : (
+                                          <p className="ml-4">
+                                            {(
+                                              product.quantity * product.price
+                                            ).toLocaleString()}{" "}
+                                            ₴
+                                          </p>
+                                        )}
                                       </div>
                                       <p className="mt-1 text-sm text-gray-500">
                                         {product.category}
@@ -193,7 +214,7 @@ export const Cart = () => {
                           <p>
                             {cart
                               .reduce(
-                                (acc, item) => acc + item.price * item.quantity,
+                                (acc, item) => acc + (item.price - (item.price *item.decreasePercent)/100) * item.quantity,
                                 0
                               )
                               .toLocaleString()}{" "}

@@ -31,6 +31,8 @@ namespace ExamWebShop.Controllers
             var query = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
+                .Include(x => x.SaleProducts)
+                .ThenInclude(x=>x.Sale)
                 .Where(x => !x.IsDeleted)
                 .AsQueryable();
 
@@ -102,19 +104,6 @@ namespace ExamWebShop.Controllers
             return Ok(list);
         }
 
-        [HttpGet("count")]
-        public IActionResult GetCount(string search)
-        {
-            var query = _productsService.Products
-                .Include(x => x.Category)
-                .Include(x => x.Images.OrderBy(i => i.Priority))
-                .AsQueryable();
-
-            query = CreateSearchQuery(query, search);
-
-            var count = query.Count();
-            return Ok(count);
-        }
         [HttpPost]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] CreateProductViewModel model)
@@ -142,6 +131,8 @@ namespace ExamWebShop.Controllers
             var model = _productsService.Products
                 .Include(x=>x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
+                .Include(x => x.SaleProducts.Where(x => x.ProductId == id).OrderByDescending(x => x.Sale.DecreasePercent))
+                .ThenInclude(x => x.Sale)
                 .SingleOrDefault(x => x.Id == id);
             if (model == null)
                 return NotFound();

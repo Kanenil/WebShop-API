@@ -1,3 +1,6 @@
+import { IProduct } from './../products/types';
+import http from "../../http";
+
 export interface ICart 
 {
   isOpen: boolean;
@@ -12,6 +15,7 @@ export interface ICartItem
     price: number;
     image: string;
     quantity: number;
+    decreasePercent: number;
 }
 
 const initState: ICart = {
@@ -19,9 +23,17 @@ const initState: ICart = {
   cart: [],
 };
 
+
 const cartFromLocalStorage = localStorage.getItem("cart");
 if (cartFromLocalStorage) {
-  initState.cart = JSON.parse(cartFromLocalStorage);
+  let cart = JSON.parse(cartFromLocalStorage) as ICartItem[];
+  cart.forEach(async element => {
+    const resp = await http.get<IProduct>('/api/products/id/'+element.id);
+    if(parseInt(resp.data.decreasePercent) != element.decreasePercent)
+      element.decreasePercent = parseInt(resp.data.decreasePercent);
+  });
+
+  initState.cart = cart;
 }
 
 export enum CartActionType {
