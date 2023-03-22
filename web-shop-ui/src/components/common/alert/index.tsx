@@ -5,7 +5,6 @@ import {
   CheckIcon,
 } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { useState } from "react";
 
 interface Props {
   text: string;

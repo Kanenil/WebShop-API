@@ -6,15 +6,12 @@ import { Logout } from "./components/auth/Logout";
 import AdminNavbar from "./components/containers/Layout/AdminNavbar";
 import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
 import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
-import { ProfilePage } from "./components/profile/ProfilePage";
 import { CreateProductPage } from "./components/admin/products/CreateProductPage";
 import { EditProductPage } from "./components/admin/products/EditProductPage";
 import { MainPage } from "./components/main/MainPage";
 import { ProductPage } from "./components/products/ProductPage";
-import { ConfirmEmailPage } from "./components/profile/ConfirmEmail";
 import { CategoriesMainPage } from "./components/categories/CategoriesMainPage";
 import ProductsMainPage from "./components/products/list";
-import { Error404 } from "./components/error/Error404";
 import ProductsListPage from "./components/admin/products/list";
 import AdminHomePage from "./components/admin/home";
 import SalesListPage from "./components/admin/sales/list";
@@ -27,6 +24,8 @@ import RegistrtrationPage from "./components/auth/register";
 import GoogleRegistration from "./components/auth/finish";
 import ForgotPassword from "./components/auth/forgotPassword";
 import ResetPassword from "./components/auth/resetPassword";
+import Error404 from "./components/error/404";
+import Profile from "./components/profile";
 
 function App() {
   return (
@@ -47,10 +46,7 @@ function App() {
               </Route>
               <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/profile">
-              <Route index element={<ProfilePage />} />
-              <Route path="confirmEmail" element={<ConfirmEmailPage />} />
-            </Route>
+            <Route path="/profile" element={<Profile />}/>
             <Route path="/categories">
               <Route index element={<CategoriesMainPage />} />
             </Route>

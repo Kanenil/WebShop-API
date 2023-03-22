@@ -114,7 +114,7 @@ namespace ExamWebShop.Services
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var frontendUrl = _configuration.GetValue<string>("FrontEndURL");
 
-            var callbackUrl = $"{frontendUrl}/profile/confirmemail?userId={user.Id}&" +
+            var callbackUrl = $"{frontendUrl}/profile?userId={user.Id}&" +
                 $"code={WebUtility.UrlEncode(token)}";
 
             var dir = Path.Combine(Directory.GetCurrentDirectory(), "email-template", "confirmEmail.html");
