@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Transition } from "@headlessui/react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
-import { ICarouselProp } from "./types";
-import { APP_ENV } from "../../env";
-import noimage from "../../assets/no-image.webp";
+import { APP_ENV } from "../../../env";
+import noimage from "../../../assets/no-image.webp";
+import classNames from "classnames";
 
 function validateURL(url: string) {
   return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
@@ -11,7 +11,11 @@ function validateURL(url: string) {
   );
 }
 
-const Carousel = ({ images }: ICarouselProp) => {
+interface Props {
+  images: string[];
+}
+
+const Carousel: React.FC<Props> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const prevImage = () => {
@@ -28,7 +32,7 @@ const Carousel = ({ images }: ICarouselProp) => {
 
   return (
     <div className="relative">
-      <div className="overflow-hidden">
+      <div className="overflow-hidden dark:bg-gray-100">
         <div className="flex h-96 justify-center items-center">
           {images.map((image, index) => (
             <Transition
@@ -57,10 +61,10 @@ const Carousel = ({ images }: ICarouselProp) => {
           ))}
         </div>
       </div>
-      <button className="absolute inset-y-1/2 left-0 z-10" onClick={prevImage}>
+      <button className="absolute inset-y-1/3 left-0 z-10 " onClick={prevImage}>
         <ArrowLeftIcon className="w-6 h-6 text-black" />
       </button>
-      <button className="absolute inset-y-1/2 right-0 z-10" onClick={nextImage}>
+      <button className="absolute inset-y-1/3 right-0 z-10" onClick={nextImage}>
         <ArrowRightIcon className="w-6 h-6 text-black" />
       </button>
 
@@ -68,11 +72,14 @@ const Carousel = ({ images }: ICarouselProp) => {
         {images.map((image, index) => (
           <button
             key={index}
-            className={`mx-1 h-20 w-20 flex justify-center items-center ${
-              currentIndex === index
-                ? "border-indigo-300 border-2"
-                : "border-indigo-400 hover:border-indigo-500 hover:border-2"
-            }`}
+            className={classNames(
+              "mx-1 h-20 w-20 flex justify-center items-center dark:bg-gray-100",
+              { "border-indigo-300 border-2": currentIndex === index },
+              {
+                "border-indigo-400 hover:border-indigo-500 hover:border-2":
+                  currentIndex !== index,
+              }
+            )}
             onClick={() => selectImage(index)}
           >
             <img

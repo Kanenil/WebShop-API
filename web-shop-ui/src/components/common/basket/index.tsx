@@ -154,21 +154,21 @@ const Cart = () => {
                                               onProductClick(product.id)
                                             }
                                           >
-                                            {product.name.length > 20
-                                              ? product.name.substring(0, 20) +
+                                            {product.name.length > 17
+                                              ? product.name.substring(0, 17) +
                                                 "..."
                                               : product.name}
                                           </button>
                                         </h3>
                                         {product.decreasePercent ? (
-                                          <div>
-                                            <p className="ml-4 text-sm line-through">
+                                          <div className="ml-4">
+                                            <p className="text-sm line-through">
                                               {(
                                                 product.quantity * product.price
                                               ).toLocaleString()}{" "}
                                               ₴
                                             </p>
-                                            <p className="ml-4 text-red-500 dark:font-bold">
+                                            <p className="text-red-500 dark:font-bold">
                                               {(
                                                 product.quantity *
                                                   product.price -
@@ -189,9 +189,15 @@ const Cart = () => {
                                           </p>
                                         )}
                                       </div>
-                                      <p className="mt-1 text-sm text-gray-500">
-                                        {product.category}
-                                      </p>
+                                      {product.decreasePercent ? (
+                                        <p className="-mt-3.5 text-sm text-gray-500">
+                                          {product.category}
+                                        </p>
+                                      ) : (
+                                        <p className="mt-1 text-sm text-gray-500">
+                                          {product.category}
+                                        </p>
+                                      )}
                                     </div>
                                     <div className="flex flex-1 items-end justify-between text-sm">
                                       <div className="flex items-center">

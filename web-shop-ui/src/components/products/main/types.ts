@@ -1,5 +1,3 @@
-import { IProductTableItem } from "../admin/products/types";
-
 export interface IProduct {
   id: number;
   name: string;
@@ -9,8 +7,6 @@ export interface IProduct {
   decreasePercent: string;
   images: string[];
 }
-
-
 
 export interface IProductSearch {
   page?: number | string | null;
@@ -25,4 +21,26 @@ export interface IProductResult {
   pages: number;
   currentPage: number;
   total: number;
+}
+
+export interface ISortOption
+{
+    label: string;
+    value: string;
+}
+
+export interface IProductFilterItem
+{
+  label:string;
+  value: boolean; 
+}
+
+export interface IProductFilter
+{
+  label:string;
+  items: IProductFilterItem[];
+}
+
+export function filterNonNull(obj: IProductSearch) {
+  return Object.fromEntries(Object.entries(obj).filter(([k, v]) => v));
 }

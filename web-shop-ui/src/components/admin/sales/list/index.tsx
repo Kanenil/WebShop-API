@@ -4,7 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { APP_ENV } from "../../../../env";
 import http from "../../../../http";
 import GenericTable from "../../../common/table";
-import { filterNonNull } from "../../../products/list/ProductPagination";
+import { filterNonNull } from "../../../products/main/types";
 import { ISaleResult, ISaleSearch } from "./types";
 
 const countOnPage = 10;

@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { APP_ENV } from "../../../env";
-import { IProductTableItem } from "../../admin/products/types";
 import noimage from "../../../assets/no-image.webp";
 import { IProduct } from "../types";
 
@@ -12,7 +11,7 @@ interface Props {
 export const ProductItem: React.FC<Props> = ({ product }) => {
   return (
     <div className="group relative">
-      <div className="max-h-56 aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md border-2 border-gray-200 group-hover:opacity-75 lg:aspect-none lg:h-80 flex justify-center items-center">
+      <div className="max-h-60 h-56 aspect-w-1 dark:bg-gray-100 aspect-h-1 w-full overflow-hidden rounded-md border-2 border-gray-200 group-hover:opacity-75 lg:aspect-none lg:h-80 flex justify-center items-center">
         <img
           src={
             product.images[0]
@@ -25,7 +24,7 @@ export const ProductItem: React.FC<Props> = ({ product }) => {
       </div>
       <div className="mt-4 flex justify-between">
         <div>
-          <h3 className="text-sm text-gray-700">
+          <h3 className="text-sm text-gray-700 dark:text-white">
             <Link to={`/products/${product.id}`}>
               <span aria-hidden="true" className="absolute inset-0" />
               {product.name.length > 17
@@ -33,22 +32,30 @@ export const ProductItem: React.FC<Props> = ({ product }) => {
                 : product.name}
             </Link>
           </h3>
-          <p className="mt-1 text-sm text-gray-500">{product.category}</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-300">
+            {product.category}
+          </p>
         </div>
-        {product.decreasePercent?(
-            <div>
-            <p className="text-xs tracking-tight text-gray-900 line-through">
+        {product.decreasePercent ? (
+          <div>
+            <p className="text-xs tracking-tight text-gray-900 dark:text-gray-300 line-through">
+              {product?.price.toLocaleString()} ₴
+            </p>
+            <p className="text-sm font-medium text-red-500">
+              {(
+                parseFloat(product?.price) -
+                (parseFloat(product?.price) *
+                  parseFloat(product?.decreasePercent)) /
+                  100
+              ).toLocaleString()}{" "}
+              ₴
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-300">
             {product?.price.toLocaleString()} ₴
           </p>
-          <p className="text-sm font-medium text-red-500">
-            {(parseFloat(product?.price) - (parseFloat(product?.price) * parseFloat(product?.decreasePercent))/100).toLocaleString()} ₴
-          </p>
-            </div>
-          ):(
-<p className="text-sm font-medium text-gray-900">
-            {product?.price.toLocaleString()} ₴
-          </p>
-          )}
+        )}
       </div>
     </div>
   );

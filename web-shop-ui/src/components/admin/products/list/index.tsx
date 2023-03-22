@@ -3,9 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import qs from "qs";
 import { IProductResult, IProductSearch } from "../../../products/types";
 import http from "../../../../http";
-import {
-  filterNonNull,
-} from "../../../products/list/ProductPagination";
+import { filterNonNull } from "../../../products/main/types";
 import GenericTable from "../../../common/table";
 import { APP_ENV } from "../../../../env";
 

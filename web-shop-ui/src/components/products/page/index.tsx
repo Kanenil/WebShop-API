@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { APP_ENV } from "../../env";
-import http from "../../http";
-import Carousel from "../helpers/Carousel";
+import http from "../../../http";
 import { useDispatch, useSelector } from "react-redux";
-import { IProduct } from "./types";
-import { ICart, ICartItem } from "../common/basket/types";
-import { setCart, setOpen } from "../common/basket/CartReducer";
+import { IProduct } from "../types";
+import { ICart, ICartItem } from "../../common/basket/types";
+import { setCart, setOpen } from "../../common/basket/CartReducer";
 import Cookies from "js-cookie";
+import Carousel from "../../common/carousel";
 
-export const ProductPage = () => {
+const ProductPage = () => {
   
   const [product, setProduct] = useState<IProduct>({
     name: "",
@@ -78,7 +77,7 @@ export const ProductPage = () => {
             <div className="flex items-center">
               <Link
                 to={"/products?page=1"}
-                className="mr-2 text-sm font-medium text-gray-900"
+                className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
               >
                 Товари
               </Link>
@@ -98,7 +97,7 @@ export const ProductPage = () => {
             <div className="flex items-center">
               <Link
                 to={'/products?page=1&category='+product?.category}
-                className="mr-2 text-sm font-medium text-gray-900"
+                className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
               >
                 {product?.category}
               </Link>
@@ -118,7 +117,7 @@ export const ProductPage = () => {
             <Link
               to={""}
               aria-current="page"
-              className="font-medium text-gray-500 hover:text-gray-600"
+              className="font-medium text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-200"
             >
               {product!.name.length > 37
                 ? product!.name.substring(0, 37) + "..."
@@ -129,8 +128,8 @@ export const ProductPage = () => {
       </nav>
 
       <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
-        <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl mb-5">
+        <div className="lg:col-span-2 lg:border-r lg:border-gray-200 dark:lg:border-gray-600 lg:pr-8">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-3xl mb-5">
             {product?.name}
           </h1>
           <Carousel images={product.images} />
@@ -140,7 +139,7 @@ export const ProductPage = () => {
 
           {product.decreasePercent?(
             <>
-            <p className="text-lg tracking-tight text-gray-900 line-through">
+            <p className="text-lg tracking-tight text-gray-900 dark:text-gray-300 line-through">
             {product?.price.toLocaleString()} ₴
           </p>
           <p className="text-3xl tracking-tight text-red-500">
@@ -148,7 +147,7 @@ export const ProductPage = () => {
           </p>
             </>
           ):(
-<p className="text-3xl tracking-tight text-gray-900">
+<p className="text-3xl tracking-tight text-gray-900 dark:text-gray-300">
             {product?.price.toLocaleString()} ₴
           </p>
           )}
@@ -176,12 +175,10 @@ export const ProductPage = () => {
           )}
         </div>
 
-        <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pt-6 lg:pb-16 lg:pr-8">
+        <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 dark:lg:border-gray-600 lg:pt-6 lg:pb-16 lg:pr-8">
           <div>
-            <h3 className="sr-only">Опис</h3>
-
             <div
-              className="prose"
+              className="prose text-black dark:text-gray-200"
               dangerouslySetInnerHTML={{ __html: product!.description }}
             />
           </div>
@@ -190,3 +187,4 @@ export const ProductPage = () => {
     </div>
   );
 };
+export default ProductPage;

@@ -1,4 +1,4 @@
-export interface ICategoryMenu 
+export interface ICategoryItem 
 {
     countProducts: number;
     name:string;

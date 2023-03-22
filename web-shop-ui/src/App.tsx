@@ -9,9 +9,6 @@ import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage
 import { CreateProductPage } from "./components/admin/products/CreateProductPage";
 import { EditProductPage } from "./components/admin/products/EditProductPage";
 import { MainPage } from "./components/main/MainPage";
-import { ProductPage } from "./components/products/ProductPage";
-import { CategoriesMainPage } from "./components/categories/CategoriesMainPage";
-import ProductsMainPage from "./components/products/list";
 import ProductsListPage from "./components/admin/products/list";
 import AdminHomePage from "./components/admin/home";
 import SalesListPage from "./components/admin/sales/list";
@@ -26,6 +23,9 @@ import ForgotPassword from "./components/auth/forgotPassword";
 import ResetPassword from "./components/auth/resetPassword";
 import Error404 from "./components/error/404";
 import Profile from "./components/profile";
+import CategoriesPage from "./components/categories";
+import ProductsMainPage from "./components/products/main";
+import ProductPage from "./components/products/page";
 
 function App() {
   return (
@@ -48,7 +48,7 @@ function App() {
             </Route>
             <Route path="/profile" element={<Profile />}/>
             <Route path="/categories">
-              <Route index element={<CategoriesMainPage />} />
+              <Route index element={<CategoriesPage />} />
             </Route>
             <Route path="/products">
               <Route index element={<ProductsMainPage />} />

@@ -1,5 +1,4 @@
 import React from "react";
-import { IProductTableItem } from "../../admin/products/types";
 import { IProduct } from "../types";
 import { ProductItem } from "./ProductItem";
 

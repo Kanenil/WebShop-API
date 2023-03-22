@@ -53,10 +53,10 @@ namespace ExamWebShop.Controllers
             switch (model.Sort)
             {
                 case Sorts.PriceLowToHigh:
-                    query = query.OrderBy(x => x.Price);
+                    query = query.OrderBy(x => x.SaleProducts.Count > 0 ? x.Price - (x.Price * x.SaleProducts.First().Sale.DecreasePercent) / 100 : x.Price);
                     break;
                 case Sorts.PriceHighToLow:
-                    query = query.OrderByDescending(x => x.Price);
+                    query = query.OrderByDescending(x => x.SaleProducts.Count>0? x.Price-(x.Price*x.SaleProducts.First().Sale.DecreasePercent)/100:x.Price);
                     break;
                 case Sorts.NameAscending:
                     query = query.OrderBy(x => x.Name);
