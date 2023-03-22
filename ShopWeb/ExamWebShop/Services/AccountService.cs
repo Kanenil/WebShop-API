@@ -88,10 +88,11 @@ namespace ExamWebShop.Services
             return list.AsEnumerable();
         }
 
-        public async Task ChangePasswordAsync(ChangePasswordViewModel model)
+        public async Task<bool> ChangePasswordAsync(ChangePasswordViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
-            await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            return result.Succeeded;
         }
 
         public async Task<string> ConfirmEmailAsync(ConfirmEmailViewModel model)

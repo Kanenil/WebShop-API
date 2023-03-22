@@ -43,22 +43,19 @@ export const GoogleAuth = () => {
         http.get<IBasketResponce>("/api/account/basket").then((resp) => {
           const { data } = resp;
           const list = data.list.map((item) => {
-              const cartItem: ICartItem = {
-                id: item.product.id,
-                name: item.product.name,
-                category: item.product.category,
-                price: parseFloat(item.product.price),
-                image: item.product.images[0],
-                quantity: item.count,
-                decreasePercent: parseInt(item.product.decreasePercent),
-              };
+            const cartItem: ICartItem = {
+              id: item.product.id,
+              name: item.product.name,
+              category: item.product.category,
+              price: parseFloat(item.product.price),
+              image: item.product.images[0],
+              quantity: item.count,
+              decreasePercent: parseInt(item.product.decreasePercent),
+            };
             return cartItem;
           });
-          console.log(list);
-          
-          dispatch(
-            setCart(list)
-          );
+
+          dispatch(setCart(list));
         });
 
         dispatch(
@@ -87,16 +84,20 @@ export const GoogleAuth = () => {
     window.google.accounts.id.renderButton(
       document.getElementById("googleButton"),
       {
-        theme: "outline",
-        size: "large",
-        type: "icon",
+        theme: "filled_black",
+        size: "medium",
+        type: "standard",
+        width: 380,
       }
     );
   }, []);
 
   return (
     <>
-      <div id="googleButton"></div>
+      <div
+        className="flex items-center justify-center mt-4"
+        id="googleButton"
+      ></div>
     </>
   );
 };

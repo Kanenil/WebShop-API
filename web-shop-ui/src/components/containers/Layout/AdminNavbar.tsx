@@ -1,6 +1,6 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, MoonIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
   NavLink,
   Outlet,
@@ -12,6 +12,7 @@ import { IAuthUser } from "../../auth/types";
 import { useSelector } from "react-redux";
 import usericon from "../../../assets/user.jpg";
 import { APP_ENV } from "../../../env";
+import { SunIcon } from "@heroicons/react/20/solid";
 
 const navigation = [
   { name: "Оновлення", href: "/control-panel", current: false },
@@ -40,17 +41,39 @@ export default function AdminNavbar() {
   const url = useLocation();
   const navigator = useNavigate();
 
+  const [theme, setTheme] = useState(true);
+
   navigation.forEach((item) => {
     if (item.href == url.pathname) item.current = true;
     else {
       item.current = false;
     }
   });
+  
+
+
+  const onChangeTheme = () => {
+    if(!localStorage.theme)
+    {
+      localStorage.theme = 'dark';
+      document.body.classList.add('dark');
+      setTheme(true);
+    }
+    else
+    {
+      localStorage.removeItem('theme');
+      document.body.classList.remove('dark');
+      setTheme(false);
+    }
+  }
 
   const user = useSelector((store: any) => store.auth as IAuthUser);
 
   useEffect(() => {
     if (!user.roles.toLocaleLowerCase().includes("admin")) navigator("/*");
+    if (localStorage.theme === 'dark') {
+      document.body.classList.add('dark');
+    }
   }, []);
 
   return (
@@ -63,7 +86,11 @@ export default function AdminNavbar() {
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <img className="h-12 w-auto" src={logo} alt="Your Company" />
+                      <img
+                        className="h-12 w-auto"
+                        src={logo}
+                        alt="Your Company"
+                      />
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
@@ -86,13 +113,26 @@ export default function AdminNavbar() {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
-                      <button
+                      {theme?(
+                        <button
                         type="button"
+                        onClick={onChangeTheme}
                         className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
                         <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
+                        <SunIcon className="h-6 w-6" aria-hidden="true" />
                       </button>
+                      ):(
+<button
+                        type="button"
+                        onClick={onChangeTheme}
+                        className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      >
+                        <span className="sr-only">View notifications</span>
+                        <MoonIcon className="h-6 w-6" aria-hidden="true" />
+                      </button>
+                      )}
+                      
 
                       <Menu as="div" className="relative ml-3">
                         <div>
@@ -100,7 +140,13 @@ export default function AdminNavbar() {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.image ? validateURL(user.image)?user.image:`${APP_ENV.IMAGE_PATH}500x500_${user.image}` : usericon}
+                              src={
+                                user.image
+                                  ? validateURL(user.image)
+                                    ? user.image
+                                    : `${APP_ENV.IMAGE_PATH}500x500_${user.image}`
+                                  : usericon
+                              }
                               alt=""
                             />
                           </Menu.Button>
@@ -179,7 +225,13 @@ export default function AdminNavbar() {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.image ? validateURL(user.image)?user.image:`${APP_ENV.IMAGE_PATH}500x500_${user.image}` : usericon}
+                        src={
+                          user.image
+                            ? validateURL(user.image)
+                              ? user.image
+                              : `${APP_ENV.IMAGE_PATH}500x500_${user.image}`
+                            : usericon
+                        }
                         alt=""
                       />
                     </div>
@@ -196,7 +248,7 @@ export default function AdminNavbar() {
                       className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
                       <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
+                      <MoonIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
                   <div className="mt-3 space-y-1 px-2">
@@ -216,7 +268,6 @@ export default function AdminNavbar() {
             </>
           )}
         </Disclosure>
-
 
         <main>
           <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">

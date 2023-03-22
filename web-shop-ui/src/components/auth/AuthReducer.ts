@@ -2,9 +2,6 @@ import jwt from "jwt-decode";
 import http from "../../http";
 import Cookies from "js-cookie";
 import { AuthActionType, IAuthUser } from "./types";
-import { IBasketResponce, ICartItem } from "../common/basket/types";
-import { setCart } from "../common/basket/CartReducer";
-import { useDispatch } from "react-redux";
 
 const savedToken = Cookies.get("token");
 

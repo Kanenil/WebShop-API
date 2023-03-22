@@ -1,11 +1,7 @@
 import React from "react";
-import Header from "./components/containers/Layout";
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import LoginPage from "./components/auth/login";
-import { RegisterPage } from "./components/auth/register/RegisterPage";
-import { GoogleRegisterPage } from "./components/auth/register/GoogleRegisterPage";
 import { Logout } from "./components/auth/Logout";
 import AdminNavbar from "./components/containers/Layout/AdminNavbar";
 import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
@@ -15,8 +11,6 @@ import { CreateProductPage } from "./components/admin/products/CreateProductPage
 import { EditProductPage } from "./components/admin/products/EditProductPage";
 import { MainPage } from "./components/main/MainPage";
 import { ProductPage } from "./components/products/ProductPage";
-import { ForgotPasswordPage } from "./components/auth/ForgotPasswordPage";
-import { ResetPasswordPage } from "./components/auth/ResetPasswordPage";
 import { ConfirmEmailPage } from "./components/profile/ConfirmEmail";
 import { CategoriesMainPage } from "./components/categories/CategoriesMainPage";
 import ProductsMainPage from "./components/products/list";
@@ -27,22 +21,28 @@ import SalesListPage from "./components/admin/sales/list";
 import CategoriesListPage from "./components/admin/categories/list";
 import CreateSalePage from "./components/admin/sales/create";
 import EditSalePage from "./components/admin/sales/edit";
+import MainLayout from "./components/containers/Layout/default";
+import LoginPage from "./components/auth/login";
+import RegistrtrationPage from "./components/auth/register";
+import GoogleRegistration from "./components/auth/finish";
+import ForgotPassword from "./components/auth/forgotPassword";
+import ResetPassword from "./components/auth/resetPassword";
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Header />}>
+          <Route path="/" element={<MainLayout />}>
             <Route index element={<MainPage />} />
             <Route path="/auth">
               <Route path="login" element={<LoginPage />} />
-              <Route path="forgotPassword" element={<ForgotPasswordPage />} />
-              <Route path="resetPassword" element={<ResetPasswordPage />} />
+              <Route path="forgotPassword" element={<ForgotPassword />} />
+              <Route path="resetPassword" element={<ResetPassword />} />
               <Route path="register">
-                <Route index element={<RegisterPage />} />
+                <Route index element={<RegistrtrationPage />} />
                 <Route path="finish">
-                  <Route path=":token" element={<GoogleRegisterPage />} />
+                  <Route index element={<GoogleRegistration />} />
                 </Route>
               </Route>
               <Route path="logout" element={<Logout />} />

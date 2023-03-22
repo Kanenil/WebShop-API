@@ -68,7 +68,8 @@ namespace ExamWebShop.Controllers
         [HttpPost("changePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordViewModel model)
         {
-            await _accountService.ChangePasswordAsync(model);
+            if (!await _accountService.ChangePasswordAsync(model))
+                return BadRequest();
             return Ok();
         }
         [HttpGet("basket")]
