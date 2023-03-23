@@ -78,7 +78,7 @@ namespace ExamWebShop.Services
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Images)
                 .Include(x => x.Product)
-                    .ThenInclude(x => x.SaleProducts.OrderByDescending(x => x.Sale.DecreasePercent))
+                    .ThenInclude(x => x.SaleProducts.Where(x => x.Sale.ExpireTime > DateTime.UtcNow).OrderByDescending(x => x.Sale.DecreasePercent))
                         .ThenInclude(x => x.Sale)
                 .Include(x => x.Product)
                     .ThenInclude(x => x.Category)

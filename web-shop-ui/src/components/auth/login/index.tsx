@@ -12,11 +12,23 @@ import Cookies from "js-cookie";
 import jwt from "jwt-decode";
 import { setCart } from "../../common/basket/CartReducer";
 import { setUser } from "../AuthReducer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { IAuthUser } from "../types";
+import { useEffect } from "react";
 
 const LoginPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
+
+  const { isAuth } = useSelector(
+    (store: any) => store.auth as IAuthUser
+  );
+
+  useEffect(() => {
+    if(isAuth) 
+      navigator('/profile');
+  }, [])
+  
 
   const initValues: ILoginUser = {
     email: "",

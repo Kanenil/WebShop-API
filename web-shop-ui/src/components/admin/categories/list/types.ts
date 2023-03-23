@@ -1,4 +1,4 @@
-import { ICategoryItem } from './../types';
+
 export interface ICategorySearch {
     page?: number | string | null;
     search?: string;
@@ -11,3 +11,10 @@ export interface ICategorySearch {
     currentPage: number;
     total: number;
   }
+
+  export interface ICategoryItem 
+{
+    id: number;
+    name:string;
+    image:string;
+}

@@ -35,7 +35,7 @@ export const ListGenerator: React.FC<Props> = ({ list, onDelete }) => {
                 className="px-4 py-4 text-sm whitespace-nowrap"
               >
                 <div>
-                  <h4 className="text-gray-700">{item[field]}</h4>
+                  <h4 className="text-gray-700 dark:text-gray-300">{item[field]}</h4>
                 </div>
               </td>
             )
@@ -50,7 +50,7 @@ export const ListGenerator: React.FC<Props> = ({ list, onDelete }) => {
 
               <Link
                 to={"edit/" + item['#']}
-                className="text-gray-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                className="text-gray-500 dark:text-gray-300 dark:hover:text-yellow-500 transition-colors duration-200  focus:outline-none"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

@@ -1,8 +1,8 @@
-export interface IEditSale {
-    id: number;
-    name: string;
-    image: string;
-    description: string;
-    decreasePercent: number;
-    expireTime: string;
-  }
+export interface ISaleEdit {
+  id: number | string;
+  name: string;
+  image: string | File | null;
+  description: string;
+  decreasePercent: number;
+  expireTime: string;
+}

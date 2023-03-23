@@ -31,7 +31,7 @@ namespace ExamWebShop.Controllers
             var query = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
-                .Include(x => x.SaleProducts.OrderByDescending(x => x.Sale.DecreasePercent))
+                .Include(x => x.SaleProducts.Where(x=>x.Sale.ExpireTime > DateTime.UtcNow).OrderByDescending(x => x.Sale.DecreasePercent))
                 .ThenInclude(x=>x.Sale)
                 .Where(x => !x.IsDeleted)
                 .AsQueryable();
@@ -108,7 +108,7 @@ namespace ExamWebShop.Controllers
 
         [HttpPost]
         [Authorize(Roles = Roles.Admin)]
-        public async Task<IActionResult> Create([FromBody] CreateProductViewModel model)
+        public async Task<IActionResult> Create(CreateProductViewModel model)
         {
             if(!ModelState.IsValid)
                 return BadRequest();
@@ -133,7 +133,7 @@ namespace ExamWebShop.Controllers
             var model = _productsService.Products
                 .Include(x=>x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
-                .Include(x => x.SaleProducts.Where(x => x.ProductId == id).OrderByDescending(x => x.Sale.DecreasePercent))
+                .Include(x => x.SaleProducts.Where(x => x.ProductId == id).Where(x => x.Sale.ExpireTime > DateTime.UtcNow).OrderByDescending(x => x.Sale.DecreasePercent))
                 .ThenInclude(x => x.Sale)
                 .SingleOrDefault(x => x.Id == id);
             if (model == null)

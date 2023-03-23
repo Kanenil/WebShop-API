@@ -3,11 +3,6 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Logout } from "./components/auth/Logout";
-import AdminNavbar from "./components/containers/Layout/AdminNavbar";
-import { CreateCategoryPage } from "./components/admin/categories/CreateCategoryPage";
-import { EditCategoryPage } from "./components/admin/categories/EditCategoryPage";
-import { CreateProductPage } from "./components/admin/products/CreateProductPage";
-import { EditProductPage } from "./components/admin/products/EditProductPage";
 import { MainPage } from "./components/main/MainPage";
 import ProductsListPage from "./components/admin/products/list";
 import AdminHomePage from "./components/admin/home";
@@ -26,6 +21,12 @@ import Profile from "./components/profile";
 import CategoriesPage from "./components/categories";
 import ProductsMainPage from "./components/products/main";
 import ProductPage from "./components/products/page";
+import ControlPanelLayout from "./components/containers/Layout/admin";
+import CreateCategory from "./components/admin/categories/create";
+import EditCategory from "./components/admin/categories/edit";
+import CreateProduct from "./components/admin/products/create";
+import EditProduct from "./components/admin/products/edit";
+import NewsListPage from "./components/news/list";
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<MainPage />} />
-            <Route path="/auth">
+            <Route path="auth">
               <Route path="login" element={<LoginPage />} />
               <Route path="forgotPassword" element={<ForgotPassword />} />
               <Route path="resetPassword" element={<ResetPassword />} />
@@ -46,23 +47,26 @@ function App() {
               </Route>
               <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="/profile" element={<Profile />}/>
-            <Route path="/categories">
+            <Route path="profile" element={<Profile />}/>
+            <Route path="categories">
               <Route index element={<CategoriesPage />} />
             </Route>
-            <Route path="/products">
+            <Route path="products">
               <Route index element={<ProductsMainPage />} />
               <Route path=":id" element={<ProductPage />} />
             </Route>
+            <Route path="news">
+              <Route index element={<NewsListPage/>}></Route>
+            </Route>
             <Route path="*" element={<Error404 />} />
           </Route>
-          <Route path="/control-panel" element={<AdminNavbar />}>
+          <Route path="/control-panel" element={<ControlPanelLayout />}>
             <Route index element={<AdminHomePage />} />
             <Route path="categories">
               <Route index element={<CategoriesListPage />} />
-              <Route path="create" element={<CreateCategoryPage />} />
+              <Route path="create" element={<CreateCategory />} />
               <Route path="edit">
-                <Route path=":id" element={<EditCategoryPage />} />
+                <Route path=":id" element={<EditCategory />} />
               </Route>
             </Route>
             <Route path="sales">
@@ -74,9 +78,9 @@ function App() {
             </Route>
             <Route path="products">
               <Route index element={<ProductsListPage />} />
-              <Route path="create" element={<CreateProductPage />} />
+              <Route path="create" element={<CreateProduct />} />
               <Route path="edit">
-                <Route path=":id" element={<EditProductPage />} />
+                <Route path=":id" element={<EditProduct />} />
               </Route>
             </Route>
             <Route path="*" element={<Error404 />} />

@@ -1,4 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { ArchiveBoxIcon } from "@heroicons/react/24/outline";
 import { Fragment, useRef, useState } from "react";
 import http from "../../../../http";
 import { IProductSaleItem, ProductList } from "./ProductList";
@@ -32,12 +33,15 @@ export const ProductsDialog: React.FC<Props> = ({ id }) => {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="px-6 py-2 mx-auto tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-80"
-      >
-        Товари
-      </button>
+    <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="lg:col-span-1 sm:col-span-2 flex items-center justify-between w-full px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                >
+                  <span>Товари </span>
+
+                  <ArchiveBoxIcon className="w-5 h-5 rtl:-scale-x-100" />
+                </button>
       <div className="relative flex justify-center">
         <Transition.Root show={open} as={Fragment}>
           <Dialog

@@ -47,9 +47,9 @@ const GenericTable: React.FC<Props> = ({
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-x-3">
-              <h2 className="text-lg font-medium text-gray-800">{tableName}</h2>
+              <h2 className="text-lg font-medium text-gray-800 dark:text-white">{tableName}</h2>
 
-              <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full">
+              <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-gray-600 rounded-full">
                 {lenght == 1 && `${lenght} запис`}
                 {lenght >= 2 && lenght <= 4  && `${lenght} записи`}
                 {(lenght == 0 || lenght > 4) && `${lenght} записів`}
@@ -61,7 +61,7 @@ const GenericTable: React.FC<Props> = ({
         <div className="mt-6 md:flex md:items-center md:justify-between">
           <Link
             to={"create"}
-            className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600"
+            className="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +106,7 @@ const GenericTable: React.FC<Props> = ({
                 placeholder="Пошук"
                 value={search.search}
                 onChange={onSearch}
-                className="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                className="block w-full py-1.5 pr-5 text-gray-700 bg-white dark:text-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
               />
             </div>
           </div>
@@ -116,14 +116,14 @@ const GenericTable: React.FC<Props> = ({
           {list.length ? (
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                <div className="overflow-hidden border border-gray-200 md:rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                <div className="overflow-hidden border border-gray-200 dark:border-gray-600 md:rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+                    <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
                         <HeaderGenerator name={list[0]} />
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                       <ListGenerator list={list} onDelete={onDelete} />
                     </tbody>
                   </table>

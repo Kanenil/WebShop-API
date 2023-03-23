@@ -13,6 +13,5 @@ namespace ExamWebShop.Models.Products
         public decimal Price { get; set; }
         [Required]
         public List<string> Images { get; set; }
-
     }
 }

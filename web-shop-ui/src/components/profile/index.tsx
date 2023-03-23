@@ -23,6 +23,7 @@ import citylandscape from "../../assets/city-landscape.png";
 import { ChangeEvent, useEffect, useState } from "react";
 import userImage from "../../assets/user.jpg";
 import Alert from "../common/alert";
+import {FormField} from "../common/inputs/FormField";
 
 const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);

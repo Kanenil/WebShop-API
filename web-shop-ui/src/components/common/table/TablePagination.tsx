@@ -25,8 +25,8 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                 to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
               className={classNames({
                 'px-2 py-1 text-sm': true,
-                'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
+                'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
               })}
             >
               {page}
@@ -41,11 +41,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   {page}
                 </Link>
@@ -58,11 +58,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   ...
                 </Link>
@@ -79,11 +79,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   ...
                 </Link>
@@ -94,11 +94,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   {page}
                 </Link>
@@ -113,11 +113,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   ...
                 </Link>
@@ -129,11 +129,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   {page}
                 </Link>
@@ -145,11 +145,11 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
                   key={"page-" + page}
                   onClick={()=>onClick(page)}
                     to={"?" + qs.stringify(filterNonNull({ ...search, page }))}
-                  className={classNames({
-                    'px-2 py-1 text-sm': true,
-                    'text-blue-500 rounded-md bg-blue-100/60': page == currentPage,
-                    'text-gray-500 rounded-md hover:bg-gray-100': page != currentPage
-                  })}
+                    className={classNames({
+                      'px-2 py-1 text-sm': true,
+                      'text-blue-500 rounded-md bg-blue-100/60 dark:bg-gray-800': page == currentPage,
+                      'text-gray-500 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100': page != currentPage
+                    })}
                 >
                   {page}
                 </Link>
@@ -165,7 +165,7 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
         <Link
           to={"?" + qs.stringify(filterNonNull({ ...search, page: currentPage - 1 }))}
           className={classNames(
-            "flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100",
+            "flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800",
             {'disabled-link': currentPage - 1 <= 0}
           )}
           onClick={()=>onClick(currentPage - 1)}
@@ -195,7 +195,7 @@ export const TablePagination : React.FC<Props> = ({pages, currentPage, onClick, 
         <Link
           to={"?" + qs.stringify(filterNonNull({ ...search, page: currentPage + 1 }))}
           className={classNames(
-            "flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100",
+            "flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800",
             {'disabled-link': currentPage + 1 > pages}
           )}
           onClick={()=>onClick(currentPage + 1)}

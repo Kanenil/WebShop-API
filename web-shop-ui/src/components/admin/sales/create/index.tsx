@@ -1,254 +1,179 @@
-import { Editor } from "@tinymce/tinymce-react";
-import { ChangeEvent, useRef, useState } from "react";
+import {
+  ArchiveBoxXMarkIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
+import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import http from "../../../../http";
-import { ICreateSale, IFile } from "./types";
+import Alert from "../../../common/alert";
+import { ISaleCreate } from "./types";
+import citylandscape from "../../../../assets/city-landscape.png";
+import defaultImage from "../../../../assets/no-image.webp";
+import { FileField } from "../../../common/inputs/FileField";
+import { FormField } from "../../../common/inputs/FormField";
+import { useFormik } from "formik";
+import { SaleCreateSchema } from "./validation";
+import { TinyEditor } from "../../../common/inputs/TinyEditor";
 
 const CreateSalePage = () => {
-  const [state, setState] = useState<ICreateSale>({
-    name: "",
-    image: "",
-    description: "",
-    decreasePercent: 0,
-    expireTime: "",
-  });
-  const [file, setFile] = useState<IFile>();
-  const [isHovered, setIsHovered] = useState(false);
-
-  const editorRef = useRef(null);
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
   const navigator = useNavigate();
 
-  const handleEditorChange = (content: string) => {
-    setState({ ...state, description: content });
+  const initValues: ISaleCreate = {
+    name: "",
+    decreasePercent: 1,
+    description: "<p>Опис акції</p>",
+    image: null,
+    expireTime: new Date().toISOString().substring(0, 10),
   };
 
-  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
+  const onFileChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const { target } = e;
+    const { files } = target;
+    if (files) {
       const file = files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setFile({ url: imageUrl, file });
+      setFieldValue("image", file);
     }
+    target.value = "";
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (state.name && state.decreasePercent && state.decreasePercent && state.expireTime && file) {
-      const formData = new FormData();
-      formData.append("image", file.file);
-
-      http
-        .post("/api/upload", formData, {
+  const onSubmitFormik = async (values: ISaleCreate) => {
+    try {
+      if (values.image instanceof File) {
+        const formData = new FormData();
+        formData.append("image", values.image);
+        const imageResult = await http.post("/api/upload", formData, {
           headers: {
             "content-type": "multipart/form-data",
           },
-        })
-        .then((resp) => {
-          state.image = resp.data!.image;
-          http.post("/api/sales", state).then((resp) => {
-            navigator("/control-panel/sales");
-          });
         });
+        values.image = imageResult.data.image;
+      }
+      console.log(values);
+
+      const result = await http.post("/api/sales", values);
+
+      navigator("..");
+    } catch (error: any) {
+      setAlertOpen(true);
     }
   };
 
+  const formik = useFormik({
+    initialValues: initValues,
+    validationSchema: SaleCreateSchema,
+    onSubmit: onSubmitFormik,
+  });
+
+  const { values, errors, touched, handleSubmit, handleChange, setFieldValue } =
+    formik;
+
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-6">
-          Добавити Акцію
-        </h1>
+      <section className="flex items-center justify-center m-2 max-w-lg mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-7xl">
+        <div className="flex justify-center">
+          <img
+            className="hidden bg-cover lg:block lg:w-2/5"
+            src={citylandscape}
+          />
 
-        <div className="flex items-center justify-center w-full mb-6">
-          {file != undefined ? (
-            <div
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              className="relative aspect-w-1 aspect-h-1 flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 rounded-lg bg-gray-50"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <img
-                  src={file?.url}
-                  className="object-contain max-h-60 max-w-full"
-                />
-                {isHovered && (
-                  <button
-                    className="absolute top-0 right-0 m-2 p-2 text-white bg-red-500 rounded-full"
-                    onClick={() => setFile(undefined)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
-          ) : (
-            <label
-              htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  aria-hidden="true"
-                  className="w-10 h-10 mb-3 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  ></path>
-                </svg>
-                <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">Нажміть, щоб загрузити</span>{" "}
-                  або закиньте сюди
-                </p>
-                <p className="text-xs text-gray-500">PNG, JPG або JPEG</p>
-              </div>
-              <input
-                onChange={handleFileChange}
-                id="dropzone-file"
-                type="file"
-                accept="image/png, image/jpg, image/jpeg"
-                className="hidden"
+          <div className="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
+            <div className="w-full">
+              <Alert
+                text={"Упс... Щось пішло не так! Попробуйте пізніше."}
+                type={"danger"}
+                open={alertOpen}
+                setOpen={setAlertOpen}
               />
-            </label>
-          )}
-        </div>
+              <h1 className="mt-2 text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
+                Добавити акцію.
+              </h1>
 
-        <div className="mb-6">
-          <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-medium text-gray-900 "
-          >
-            Назва
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={state.name}
-            onChange={onChangeHandler}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Назва"
-            required
-          />
-        </div>
+              <form
+                className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2"
+                onSubmit={handleSubmit}
+              >
+                <FileField
+                  onClear={() => setFieldValue("image", null)}
+                  onChange={onFileChangeHandler}
+                  value={values.image}
+                  field={"image"}
+                  defaultImage={defaultImage}
+                  error={errors.image}
+                  touched={touched.image}
+                />
 
-        <div className="mb-6">
-          <label
-            htmlFor="decreasePercent"
-            className="block mb-2 text-sm font-medium text-gray-900 "
-          >
-            Знижка в %
-          </label>
-          <input
-            type="text"
-            id="decreasePercent"
-            name="decreasePercent"
-            value={state.decreasePercent}
-            onChange={onChangeHandler}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder=""
-            required
-          />
-        </div>
-        <div className="mb-6">
-          <label
-            htmlFor="expireTime"
-            className="block mb-2 text-sm font-medium text-gray-900 "
-          >
-            Кінець акції
-          </label>
-          <input
-            type="date"
-            id="expireTime"
-            name="expireTime"
-            value={state.expireTime}
-            onChange={onChangeHandler}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            required
-          />
-        </div>
+                <div className="col-span-2">
+                  <FormField
+                    onChange={handleChange}
+                    value={values.name}
+                    label={"Назва"}
+                    placeholder={"Назва"}
+                    field={"name"}
+                    error={errors.name}
+                    touched={touched.name}
+                  />
+                </div>
 
-        <div className="mb-6">
-          <label
-            htmlFor="expireTime"
-            className="block mb-2 text-sm font-medium text-gray-900 "
-          >
-            Опис
-          </label>
-          <Editor
-            id="desc"
-            apiKey="embuig9iimcqnl5d9dzytl9wh9330zvstczvzz9cpgy96gju"
-            ref={editorRef}
-            initialValue="<p>Опис акції</p>"
-            onEditorChange={handleEditorChange}
-            init={{
-              height: 400,
-              menubar: false,
-              plugins: [
-                "advlist",
-                "autolink",
-                "lists",
-                "link",
-                "image",
-                "charmap",
-                "preview",
-                "anchor",
-                "searchreplace",
-                "visualblocks",
-                "code",
-                "fullscreen",
-                "insertdatetime",
-                "media",
-                "table",
-                "code",
-                "help",
-                "wordcount",
-              ],
-              toolbar:
-                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-            }}
-          />
-        </div>
+                <div className="col-span-2">
+                  <FormField
+                    onChange={handleChange}
+                    value={values.expireTime}
+                    label={"Кінець акції"}
+                    type="date"
+                    placeholder={"Кінець акції"}
+                    field={"expireTime"}
+                    error={errors.expireTime}
+                    touched={touched.expireTime}
+                  />
+                </div>
 
-        <button
-          type="submit"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-        >
-          Добавити
-        </button>
-        <Link
-          to={"/control-panel/sales"}
-          className="ml-2 text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-        >
-          Назад до списку
-        </Link>
-      </form>
+                <div className="col-span-2">
+                  <FormField
+                    onChange={handleChange}
+                    value={values.decreasePercent}
+                    label={"Знижка"}
+                    placeholder={"Знижка"}
+                    field={"decreasePercent"}
+                    error={errors.decreasePercent}
+                    touched={touched.decreasePercent}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <TinyEditor
+                    onChange={(content) =>
+                      setFieldValue("description", content)
+                    }
+                    value={values.description}
+                    label={"Опис"}
+                    field={"description"}
+                    error={errors.description}
+                    touched={touched.description}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="lg:col-span-1 sm:col-span-2 flex items-center justify-between w-full px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                >
+                  <span>Добавити </span>
+
+                  <PlusCircleIcon className="w-5 h-5 rtl:-scale-x-100" />
+                </button>
+                <Link
+                  to=".."
+                  className="lg:col-span-1 sm:col-span-2 flex items-center justify-between w-full px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-600 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+                >
+                  <span>Назад </span>
+
+                  <ArchiveBoxXMarkIcon className="w-5 h-5 rtl:-scale-x-100" />
+                </Link>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
     </>
   );
 };

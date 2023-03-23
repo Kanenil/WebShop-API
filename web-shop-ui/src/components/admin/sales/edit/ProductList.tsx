@@ -5,27 +5,23 @@ import { IProduct, IProductResult } from "../../../products/types";
 import { IProductTableItem } from "../../products/types";
 import { ISaleTableItem } from "../list/types";
 
-export interface IProductSaleItem
-{
-    id: number;
-    image: string;
-    name: string;
-    checked: boolean;
+export interface IProductSaleItem {
+  id: number;
+  image: string;
+  name: string;
+  checked: boolean;
 }
 
-interface Props
-{
-    id: string | undefined;
-    selected: IProductSaleItem[];
-    setSelected: React.Dispatch<React.SetStateAction<IProductSaleItem[]>>;
+interface Props {
+  id: string | undefined;
+  selected: IProductSaleItem[];
+  setSelected: React.Dispatch<React.SetStateAction<IProductSaleItem[]>>;
 }
 
-export const ProductList : React.FC<Props> = ({id, selected, setSelected}) => {
+export const ProductList: React.FC<Props> = ({ id, selected, setSelected }) => {
   const [products, setProducts] = useState<IProductSaleItem[]>([]);
   const [page, setPage] = useState<number>(1);
   const [pages, setPages] = useState<number>();
-  
-
 
   useEffect(() => {
     async function fetchData() {
@@ -74,40 +70,35 @@ export const ProductList : React.FC<Props> = ({id, selected, setSelected}) => {
       });
 
       const list = await Promise.all(product);
-      list.forEach(item=>{
-        
-        let index = selected.filter(select=>{
-            if(select.id == item.id)
-            return select;
+      list.forEach((item) => {
+        let index = selected.filter((select) => {
+          if (select.id == item.id) return select;
         });
 
-        if(index.length > 0)
-        {
-            item.checked = index[0].checked;
+        if (index.length > 0) {
+          item.checked = index[0].checked;
         }
-
-      })
+      });
       setProducts(list);
     }
 
     fetchData();
   }, [page]);
-    
-  const onSelectionChange = (value:boolean, item: IProductSaleItem) => {
+
+  const onSelectionChange = (value: boolean, item: IProductSaleItem) => {
     item.checked = value;
-    let arr = selected.filter(select=>{
-        if(select.id !== item.id)
-            return item;
+    let arr = selected.filter((select) => {
+      if (select.id !== item.id) return item;
     });
-    setSelected([...arr, item])
-  }  
+    setSelected([...arr, item]);
+  };
 
-    const changePage = (value:number)=>{
-        if(page && pages && page + value > 0 && page + value <= pages)
-            setPage(page + value);   
-    }
+  const changePage = (value: number) => {
+    if (page && pages && page + value > 0 && page + value <= pages)
+      setPage(page + value);
+  };
 
-    return (
+  return (
     <>
       <section className="container px-4 mx-auto">
         <div className="flex flex-col mt-6">
@@ -132,26 +123,30 @@ export const ProductList : React.FC<Props> = ({id, selected, setSelected}) => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                    {products?.map(item=>(
-                        <tr key={item.id}>
+                    {products?.map((item) => (
+                      <tr key={item.id}>
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">
                           <div className="inline-flex items-center gap-x-3">
                             <input
                               type="checkbox"
                               defaultChecked={item?.checked}
-                              onChange={(e)=>onSelectionChange(!item?.checked,item)}
+                              onChange={(e) =>
+                                onSelectionChange(!item?.checked, item)
+                              }
                               className="text-blue-500 border-gray-300 rounded dark:bg-gray-900 dark:ring-offset-gray-900 dark:border-gray-700"
                             />
-  
+
                             <div className="flex items-center gap-x-2">
                               <img
                                 className="object-cover w-10 h-10 rounded-full"
-                                src={APP_ENV.IMAGE_PATH+`100x100_${item?.image}`}
+                                src={
+                                  APP_ENV.IMAGE_PATH + `100x100_${item?.image}`
+                                }
                                 alt=""
                               />
                               <div>
                                 <h2 className="font-medium text-gray-800 dark:text-white ">
-                                 {item.name?.substring(0,20)}...
+                                  {item.name?.substring(0, 20)}...
                                 </h2>
                               </div>
                             </div>
@@ -166,26 +161,50 @@ export const ProductList : React.FC<Props> = ({id, selected, setSelected}) => {
           </div>
         </div>
         <div className="flex items-center justify-between mt-6">
-        <button onClick={()=>changePage(-1)} className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:-scale-x-100">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+          <button
+            onClick={() => changePage(-1)}
+            className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-5 h-5 rtl:-scale-x-100"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+              />
             </svg>
 
-            <span>
-                previous
-            </span>
-        </button>
+            <span>previous</span>
+          </button>
 
-        <button onClick={()=>changePage(1)} className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-            <span>
-                Next
-            </span>
+          <button
+            onClick={() => changePage(1)}
+            className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
+          >
+            <span>Next</span>
 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5 rtl:-scale-x-100">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-5 h-5 rtl:-scale-x-100"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+              />
             </svg>
-        </button>
-    </div>
+          </button>
+        </div>
       </section>
     </>
   );

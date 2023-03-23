@@ -17,7 +17,7 @@ export const ChangesList: React.FC<Props> = ({ array }) => {
             </p>
           </div>
           <div className="mt-2 ml-4 mb-6">
-            <h4 className="mb-1.5 text-xl font-semibold">{item.title}</h4>
+            <h4 className="mb-1.5 text-xl font-semibold dark:text-gray-400">{item.title}</h4>
             <p className="mb-3 text-neutral-500 dark:text-neutral-500">
                 {item.description}
             </p>

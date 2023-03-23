@@ -4,19 +4,30 @@ import classNames from "classnames";
 import { useFormik } from "formik";
 import Cookies from "js-cookie";
 import jwt from "jwt-decode";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import citylancscape from "../../../assets/amazing-city-landscape.png";
 import http from "../../../http";
 import { setCart } from "../../common/basket/CartReducer";
 import { IBasketResponce, ICartItem } from "../../common/basket/types";
 import { setUser } from "../AuthReducer";
+import { IAuthUser } from "../types";
 import { IRegisterUser } from "./types";
 import { RegisterSchema } from "./validation";
 
 const RegistrtrationPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
+
+  const { isAuth } = useSelector(
+    (store: any) => store.auth as IAuthUser
+  );
+
+  useEffect(() => {
+    if(isAuth) 
+      navigator('/profile');
+  }, [])
 
   const initValues: IRegisterUser = {
     firstName: "",

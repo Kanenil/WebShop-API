@@ -3,6 +3,12 @@ import { IDevLog } from "./types";
 
 const devLogList: IDevLog[] = [
   {
+    date: "23.03.2023",
+    title: "Оновлено вид сторінок додавання та редагування",
+    description:
+      "В цьому оновленні було оновлено вид сторінок додавання та редагування.",
+  },
+  {
     date: "20.03.2023",
     title: "Добавлена система акцій в тестування",
     description:
@@ -57,7 +63,7 @@ const AdminHomePage = () => {
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-300">
               Список оновлень панелі адміністратора
             </h2>
 

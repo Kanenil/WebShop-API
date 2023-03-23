@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import http from "../../../http";
 import Alert from "../../common/alert";
 import { IForgotPassword } from "./types";
@@ -7,8 +7,10 @@ import { useFormik } from "formik";
 import { ForgotPasswordSchema } from "./validation";
 import classNames from "classnames";
 import { ArrowLeftOnRectangleIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
+import { useSelector } from "react-redux";
+import { IAuthUser } from "../types";
 
 const ForgotPassword = () => {
   const initValues: IForgotPassword = {
@@ -17,6 +19,17 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState<string>("");
   const [type, setType] = useState<"success" | "danger">("success");
   const [alertOpen, setAlertOpen] = useState<boolean>(false);
+
+  const navigator = useNavigate();
+
+  const { isAuth } = useSelector(
+    (store: any) => store.auth as IAuthUser
+  );
+
+  useEffect(() => {
+    if(isAuth) 
+      navigator('/profile');
+  }, [])
 
   const onSubmitFormik = async (values: IForgotPassword) => {
     try {
