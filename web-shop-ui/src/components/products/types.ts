@@ -10,8 +10,6 @@ export interface IProduct {
   images: string[];
 }
 
-
-
 export interface IProductSearch {
   page?: number | string | null;
   search?: string;

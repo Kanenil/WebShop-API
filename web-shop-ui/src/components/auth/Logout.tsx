@@ -9,7 +9,7 @@ export const Logout = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  useEffect(()=>{
     if (Cookies.get("token")) {
       Cookies.remove("token");
       localStorage.setItem("cart", JSON.stringify([]));
@@ -28,7 +28,7 @@ export const Logout = () => {
       );
     }
     navigator("/");
-  }, []);
+  },[Cookies.get("token")])
 
   return <></>;
 };

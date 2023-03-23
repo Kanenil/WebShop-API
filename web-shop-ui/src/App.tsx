@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Logout } from "./components/auth/Logout";
-import { MainPage } from "./components/main/MainPage";
+import MainPage from "./components/main/index";
 import ProductsListPage from "./components/admin/products/list";
 import AdminHomePage from "./components/admin/home";
 import SalesListPage from "./components/admin/sales/list";
@@ -47,7 +47,7 @@ function App() {
               </Route>
               <Route path="logout" element={<Logout />} />
             </Route>
-            <Route path="profile" element={<Profile />}/>
+            <Route path="profile" element={<Profile />} />
             <Route path="categories">
               <Route index element={<CategoriesPage />} />
             </Route>
@@ -56,7 +56,7 @@ function App() {
               <Route path=":id" element={<ProductPage />} />
             </Route>
             <Route path="news">
-              <Route index element={<NewsListPage/>}></Route>
+              <Route index element={<NewsListPage />}></Route>
             </Route>
             <Route path="*" element={<Error404 />} />
           </Route>

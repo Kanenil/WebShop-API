@@ -10,8 +10,10 @@ const ControlPanelLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuth || !roles.toLowerCase().includes('admin')) 
+    if (!isAuth ) 
       navigate("/auth/login");
+    else if(!roles.toLowerCase().includes('admin'))
+      navigate("/");
   }, []);
   return (
     <>

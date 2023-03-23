@@ -9,7 +9,6 @@ import Cookies from "js-cookie";
 import Carousel from "../../common/carousel";
 
 const ProductPage = () => {
-  
   const [product, setProduct] = useState<IProduct>({
     name: "",
     price: "",
@@ -17,10 +16,10 @@ const ProductPage = () => {
     category: "",
     decreasePercent: "",
     images: [],
-    id: 1
+    id: 1,
   });
 
-  const {cart} = useSelector((store: any) => store.shoppingCart as ICart);
+  const { cart } = useSelector((store: any) => store.shoppingCart as ICart);
 
   const navigator = useNavigate();
   const location = useLocation();
@@ -60,6 +59,16 @@ const ProductPage = () => {
       .get("/api/products/id/" + id)
       .then((resp) => {
         setProduct(resp.data);
+        if (localStorage.recently) {
+          const recently = JSON.parse(localStorage.recently);
+          localStorage.setItem(
+            "recently",
+            JSON.stringify([
+              resp.data,
+              ...recently.filter((item: any) => item.id !== resp.data.id),
+            ])
+          );
+        } else localStorage.setItem("recently", JSON.stringify([resp.data]));
       })
       .catch((error) => {
         navigator("/error404");
@@ -96,7 +105,7 @@ const ProductPage = () => {
           <li>
             <div className="flex items-center">
               <Link
-                to={'/products?page=1&category='+product?.category}
+                to={"/products?page=1&category=" + product?.category}
                 className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
               >
                 {product?.category}
@@ -136,38 +145,41 @@ const ProductPage = () => {
         </div>
 
         <div className="mt-4 lg:row-span-3 lg:mt-0">
-
-          {product.decreasePercent?(
+          {product.decreasePercent ? (
             <>
-            <p className="text-lg tracking-tight text-gray-900 dark:text-gray-300 line-through">
-            {product?.price.toLocaleString()} ₴
-          </p>
-          <p className="text-3xl tracking-tight text-red-500">
-            {(parseFloat(product?.price) - (parseFloat(product?.price) * parseFloat(product?.decreasePercent))/100).toLocaleString()} ₴
-          </p>
+              <p className="text-lg tracking-tight text-gray-900 dark:text-gray-300 line-through">
+                {product?.price.toLocaleString()} ₴
+              </p>
+              <p className="text-3xl tracking-tight text-red-500">
+                {(
+                  parseFloat(product?.price) -
+                  (parseFloat(product?.price) *
+                    parseFloat(product?.decreasePercent)) /
+                    100
+                ).toLocaleString()}{" "}
+                ₴
+              </p>
             </>
-          ):(
-<p className="text-3xl tracking-tight text-gray-900 dark:text-gray-300">
-            {product?.price.toLocaleString()} ₴
-          </p>
+          ) : (
+            <p className="text-3xl tracking-tight text-gray-900 dark:text-gray-300">
+              {product?.price.toLocaleString()} ₴
+            </p>
           )}
-
-          
 
           {cart.findIndex(
             (cartItem: ICartItem) => cartItem.id === parseInt(id || "0")
           ) === -1 ? (
             <button
-                type="submit"
-                onClick={addItemToCart}
-                className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                Добавити в корзину
-              </button>
+              type="submit"
+              onClick={addItemToCart}
+              className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Добавити в корзину
+            </button>
           ) : (
             <button
               type="submit"
-              onClick={()=>dispatch(setOpen(true))}
+              onClick={() => dispatch(setOpen(true))}
               className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 py-3 px-8 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               В корзині

@@ -11,11 +11,17 @@ import Cookies from "js-cookie";
 import http from "../../../http";
 import { APP_ENV } from "../../../env";
 import noimage from "../../../assets/no-image.webp";
+import { IAuthUser } from "../../auth/types";
 
 const Cart = () => {
   const { isOpen, cart } = useSelector(
     (store: any) => store.shoppingCart as ICart
   );
+
+  const { isAuth} = useSelector(
+    (store: any) => store.auth as IAuthUser
+  );
+
   const dispatch = useDispatch();
   const navigator = useNavigate();
 
@@ -268,12 +274,12 @@ const Cart = () => {
                           Акційні товари враховані в суму.
                         </p>
                         <div className="mt-6">
-                          <a
-                            href="#"
-                            className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                          <button
+                            onClick={()=>{isAuth?navigator("/"):navigator("/auth/login");  dispatch(setOpen(false));}}
+                            className="flex items-center w-full justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                           >
                             Оформити замовлення
-                          </a>
+                          </button>
                         </div>
                         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                           <p>

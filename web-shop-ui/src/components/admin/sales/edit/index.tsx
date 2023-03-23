@@ -50,8 +50,11 @@ const EditSalePage = () => {
           },
         });
         values.image = imageResult.data.image;
+      } else {
+        const regex = /[^_]*$/;
+        const value = values.image?.match(regex)?.[0] || "";
+        values.image = value;
       }
-      console.log(values);
 
       const result = await http.put("/api/sales", values);
 
