@@ -18,6 +18,9 @@ namespace ExamWebShop.Data
         public DbSet<SaleEntity> Sales => Set<SaleEntity>();
         public DbSet<SaleProductEntity> SaleProducts => Set<SaleProductEntity>();
         public DbSet<BasketEntity> Baskets => Set<BasketEntity>();
+        public DbSet<OrderStatusEntity> OrderStatuses => Set<OrderStatusEntity>();
+        public DbSet<OrderEntity> Orders => Set<OrderEntity>();
+        public DbSet<OrderItemEntity> OrderItems => Set<OrderItemEntity>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

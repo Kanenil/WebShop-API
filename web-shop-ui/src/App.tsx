@@ -27,6 +27,9 @@ import EditCategory from "./components/admin/categories/edit";
 import CreateProduct from "./components/admin/products/create";
 import EditProduct from "./components/admin/products/edit";
 import NewsListPage from "./components/news/list";
+import OrderSummary from "./components/orders/summary";
+import OrdersPage from "./components/orders/list";
+import OrderPage from "./components/orders/order";
 
 function App() {
   return (
@@ -57,6 +60,11 @@ function App() {
             </Route>
             <Route path="news">
               <Route index element={<NewsListPage />}></Route>
+            </Route>
+            <Route path="orders">
+              <Route index element={<OrdersPage/>}/>
+              <Route path="make-order" element={<OrderSummary/>}/>
+              <Route path=":id" element={<OrderPage />} />
             </Route>
             <Route path="*" element={<Error404 />} />
           </Route>

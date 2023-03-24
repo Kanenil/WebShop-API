@@ -4,6 +4,7 @@ using ExamWebShop.Data.Entities.Identity;
 using ExamWebShop.Models.Account;
 using ExamWebShop.Models.Auth;
 using ExamWebShop.Models.Categories;
+using ExamWebShop.Models.Orders;
 using ExamWebShop.Models.Products;
 using ExamWebShop.Models.Sales;
 using System;
@@ -36,6 +37,18 @@ namespace ExamWebShop.Mapper
             CreateMap<SaleEditViewModel, SaleEntity>()
                 .ForMember(x => x.ExpireTime, opt => opt.MapFrom(x => DateTime.SpecifyKind(x.ExpireTime, DateTimeKind.Utc)));
 
+
+            CreateMap<OrderItemEntity, OrderProductItemViewModel>()
+                .ForMember(x => x.Id, opt => opt.MapFrom(x => x.ProductId))
+                .ForMember(x => x.ProductName, opt => opt.MapFrom(x => x.Product.Name))
+                .ForMember(x => x.CategoryName, opt => opt.MapFrom(x => x.Product.Category.Name))
+                .ForMember(x => x.PriceBuy, opt => opt.MapFrom(x => x.PriceBuy))
+                .ForMember(x => x.ProductImage, opt => opt.MapFrom(x => x.Product.Images.FirstOrDefault().Name))
+                .ForMember(x => x.Count, opt => opt.MapFrom(x => x.Count));
+            CreateMap<OrderEntity, OrderItemViewModel>()
+                .ForMember(x => x.OrderStatus, opt => opt.MapFrom(x => x.OrderStatus.Name))
+                .ForMember(x => x.Products, opt => opt.MapFrom(x => x.OrderItems));
+                
         }
     }
 }

@@ -95,7 +95,7 @@ namespace ExamWebShop.Controllers
             var list = _productsService.Products
                 .Include(x => x.Category)
                 .Include(x => x.Images.OrderBy(i => i.Priority))
-                .Include(x => x.SaleProducts.OrderByDescending(x => x.Sale.DecreasePercent))
+                .Include(x => x.SaleProducts.Where(x => x.Sale.ExpireTime > DateTime.UtcNow).OrderByDescending(x => x.Sale.DecreasePercent))
                 .ThenInclude(x => x.Sale)
                 .Where(x => !x.IsDeleted)
                 .OrderBy(x => x.Id)

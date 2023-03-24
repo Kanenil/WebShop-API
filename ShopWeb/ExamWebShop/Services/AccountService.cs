@@ -10,6 +10,7 @@ using System.Collections;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ExamWebShop.Data.Entities;
+using ExamWebShop.Constants;
 
 namespace ExamWebShop.Services
 {
@@ -194,5 +195,7 @@ namespace ExamWebShop.Services
             var token = await _jwtTokenService.CreateToken(user);
             return token;
         }
+
+        
     }
 }

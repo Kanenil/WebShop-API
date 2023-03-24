@@ -230,6 +230,18 @@ namespace ExamWebShop.Data
                         prod3Img1, prod3Img2, prod3Img3, prod3Img4, prod3Img5);
                     context.SaveChanges();
                 }
+
+                if(!context.OrderStatuses.Any())
+                {
+                    foreach (var orderStatus in OrderStatuses.All)
+                    {
+                        context.OrderStatuses.Add(new()
+                        {
+                            Name = orderStatus
+                        });
+                    }
+                    context.SaveChanges();
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react";
-import { ArrowLeftOnRectangleIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftOnRectangleIcon, ClipboardDocumentListIcon, UserIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -61,6 +61,14 @@ export const ProfileDropDown: React.FC<Props> = ({ image, name }) => {
                 <UserIcon className="w-5 h-5 mx-1"/>
 
                 <span className="mx-1">профіль</span>
+              </Link>
+              <Link
+                to="/orders"
+                className="flex items-center px-3 py-3 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              >
+                <ClipboardDocumentListIcon className="w-5 h-5 mx-1"/>
+
+                <span className="mx-1">мої замовлення</span>
               </Link>
               <Link
                 to="/auth/logout"

@@ -275,7 +275,7 @@ const Cart = () => {
                         </p>
                         <div className="mt-6">
                           <button
-                            onClick={()=>{isAuth?navigator("/"):navigator("/auth/login");  dispatch(setOpen(false));}}
+                            onClick={()=>{isAuth?navigator("/orders/make-order"):navigator("/auth/login");  dispatch(setOpen(false));}}
                             className="flex items-center w-full justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                           >
                             Оформити замовлення

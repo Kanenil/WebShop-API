@@ -1,9 +1,9 @@
 import { ChangeEvent, ReactNode } from "react";
 import { Link } from "react-router-dom";
+import Pagination from "../pagination";
 import { DropdownBox, ISelectOption } from "./DropdownBox";
 import { HeaderGenerator } from "./HeaderGenerator";
 import { ListGenerator } from "./ListGenerator";
-import { TablePagination } from "./TablePagination";
 
 interface Props {
   list: any[];
@@ -190,7 +190,7 @@ const GenericTable: React.FC<Props> = ({
             </div>
           )}
         </div>
-        <TablePagination
+        <Pagination
           pages={pages}
           currentPage={currentPage}
           search={search}
