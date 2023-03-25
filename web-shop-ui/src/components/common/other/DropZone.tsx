@@ -23,7 +23,7 @@ export const DropZone: React.FC<Props> = ({
     <>
       <div className="relative overflow-hidden rounded-lg shadow-md cursor-pointer">
         <div
-          className="flex flex-col items-center w-full max-w-lg p-5 mx-auto mt-2 text-center bg-white border-2 border-gray-300 border-dashed cursor-pointer dark:bg-gray-900 dark:border-gray-700 rounded-xl"
+          className="flex flex-col items-center w-full max-w-lg p-5 mx-auto text-center bg-white border-2 border-gray-300 border-dashed cursor-pointer dark:bg-gray-900 dark:border-gray-700 rounded-xl"
           {...getRootProps()}
         >
           <CloudArrowUpIcon className="w-8 h-8 text-gray-500 dark:text-gray-400" />

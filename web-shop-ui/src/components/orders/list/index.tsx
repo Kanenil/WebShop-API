@@ -1,8 +1,10 @@
 import { HomeIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { APP_ENV } from "../../../env";
 import http from "../../../http";
+import { IAuthUser } from "../../auth/types";
 import Pagination from "../../common/pagination";
 import { IOrderResponce, IOrderSearch } from "./types";
 
@@ -18,8 +20,16 @@ const OrdersPage = () => {
     total: 0,
     currentPage: 0,
   });
+  const navigator = useNavigate();
+
+  const { isAuth } = useSelector(
+    (store: any) => store.auth as IAuthUser
+  );
 
   useEffect(() => {
+    if(!isAuth)
+      navigator('/auth/login');
+
     http
       .get<IOrderResponce>("/api/orders", {
         params: search,

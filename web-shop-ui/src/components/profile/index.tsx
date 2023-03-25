@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 import { setUser } from "../auth/AuthReducer";
 import { useFormik } from "formik";
 import { ProfileSchema } from "./validation";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArchiveBoxXMarkIcon,
   ArrowLeftOnRectangleIcon,
@@ -23,7 +23,6 @@ import citylandscape from "../../assets/city-landscape.png";
 import { ChangeEvent, useEffect, useState } from "react";
 import userImage from "../../assets/user.jpg";
 import Alert from "../common/alert";
-import {FormField} from "../common/inputs/FormField";
 
 const Profile = () => {
   const [isEdit, setIsEdit] = useState(false);
@@ -32,14 +31,18 @@ const Profile = () => {
     "success"
   );
   const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const navigator = useNavigate();
 
-  const { image, name, emailConfirmed, email } = useSelector(
+  const { isAuth,image, name, emailConfirmed, email } = useSelector(
     (store: any) => store.auth as IAuthUser
   );
 
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    if(!isAuth)
+      navigator('/auth/login');
+
     const value: IConfirmEmail = {
       userId: searchParams.get("userId"),
       token: searchParams.get("code"),
