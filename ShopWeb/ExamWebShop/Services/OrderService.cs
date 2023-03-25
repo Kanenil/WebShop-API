@@ -3,7 +3,6 @@ using ExamWebShop.Constants;
 using ExamWebShop.Data.Entities.Identity;
 using ExamWebShop.Data;
 using ExamWebShop.Interfaces;
-using ExamWebShop.Models.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ExamWebShop.Data.Entities;
@@ -25,6 +24,8 @@ namespace ExamWebShop.Services
             _context = context;
             _mapper = mapper;
         }
+
+        public IQueryable<OrderStatusEntity> OrderStatuses => _context.OrderStatuses;
 
         public async Task<OrderItemViewModel> GetOrderAsync(string email, int id)
         {
@@ -73,11 +74,39 @@ namespace ExamWebShop.Services
             };
         }
 
+        public async Task<OrderTableSearchResultViewModel> GetOrdersAsync(OrderSearchViewModel search)
+        {
+            var list = await _context.Orders
+                .Include(x => x.OrderStatus)
+                .Include(x=>x.User)
+                .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Product)
+                        .ThenInclude(x => x.Category)
+                .Include(x => x.OrderItems)
+                    .ThenInclude(x => x.Product)
+                        .ThenInclude(x => x.Images.OrderBy(x => x.Priority))
+                .Skip((search.Page - 1) * search.CountOnPage)
+                .Take(search.CountOnPage)
+                .Select(x => _mapper.Map<OrderTableItemViewModel>(x))
+                .ToListAsync();
+
+            int total = list.Count();
+            int pages = (int)Math.Ceiling(total / (double)search.CountOnPage);
+
+            return new()
+            {
+                CurrentPage = search.Page,
+                Pages = pages,
+                Total = total,
+                Orders = list,
+            };
+        }
+
         public async Task MakeOrderAsync(string email, CreateOrderViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            var orderStatus = _context.OrderStatuses.SingleOrDefault(x => x.Name == OrderStatuses.New);
+            var orderStatus = _context.OrderStatuses.SingleOrDefault(x => x.Name == ExamWebShop.Constants.OrderStatuses.New);
 
             var order = await _context.Orders.AddAsync(new()
             {

@@ -7,6 +7,7 @@ using ExamWebShop.Models.Categories;
 using ExamWebShop.Models.Orders;
 using ExamWebShop.Models.Products;
 using ExamWebShop.Models.Sales;
+using ExamWebShop.Models.Users;
 using System;
 
 namespace ExamWebShop.Mapper
@@ -48,7 +49,19 @@ namespace ExamWebShop.Mapper
             CreateMap<OrderEntity, OrderItemViewModel>()
                 .ForMember(x => x.OrderStatus, opt => opt.MapFrom(x => x.OrderStatus.Name))
                 .ForMember(x => x.Products, opt => opt.MapFrom(x => x.OrderItems));
-                
+            CreateMap<OrderEntity, OrderTableItemViewModel>()
+               .ForMember(x => x.OrderStatus, opt => opt.MapFrom(x => x.OrderStatus.Name))
+               .ForMember(x => x.Products, opt => opt.MapFrom(x => x.OrderItems))
+               .ForMember(x => x.Email, opt => opt.MapFrom(x => x.User.Email))
+               .ForMember(x => x.Name, opt => opt.MapFrom(x => $"{x.User.FirstName} {x.User.LastName}"))
+               .ForMember(x => x.Image, opt => opt.MapFrom(x => x.User.Image));
+
+            CreateMap<UserEntity, UserItemViewModel>()
+                .ForMember(x => x.Banned, opt => opt.MapFrom(x => x.LockoutEnd != null))
+                .ForMember(x => x.BannedTo, opt => opt.MapFrom(x => x.LockoutEnd.ToString()))
+                .ForMember(x => x.Fullname, opt => opt.MapFrom(x => $"{x.FirstName} {x.LastName}"))
+                .ForMember(x => x.Roles, opt => opt.MapFrom(x => string.Join(" ", x.UserRoles.Where(r => r.UserId == x.Id).Select(x => x.Role.Name))))
+                .ForMember(x => x.Cart, opt => opt.MapFrom(x => x.Baskets.Where(r => r.UserId == x.Id)));
         }
     }
 }

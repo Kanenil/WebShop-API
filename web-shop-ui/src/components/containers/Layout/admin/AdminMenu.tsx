@@ -6,7 +6,7 @@ import logo from "../../../../logo.svg";
 import { NavLink } from "react-router-dom";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { ArchiveBoxIcon, ArrowLeftOnRectangleIcon, BuildingStorefrontIcon, FireIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { ArchiveBoxIcon, ArrowLeftOnRectangleIcon, BuildingStorefrontIcon, ClipboardDocumentIcon, FireIcon, MoonIcon, SunIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 function validateURL(url: string) {
   return /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/g.test(
@@ -130,6 +130,48 @@ export const AdminMenu = () => {
               <FireIcon className="w-5 h-5 hidden md:block"/>
 
               <span className="mx-0 md:mx-4 font-medium">Акції</span>
+            </NavLink>
+
+            <NavLink
+              className={({ isActive }) =>
+                classNames(
+                  "flex items-center px-4 py-2 mt-5",
+                  {
+                    "text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-200":
+                      isActive,
+                  },
+                  {
+                    "text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700":
+                      !isActive,
+                  }
+                )
+              }
+              to="orders"
+            >
+              <ClipboardDocumentIcon className="w-5 h-5 hidden md:block"/>
+
+              <span className="mx-0 md:mx-4 font-medium">Замовлення</span>
+            </NavLink>
+
+            <NavLink
+              className={({ isActive }) =>
+                classNames(
+                  "flex items-center px-4 py-2 mt-5",
+                  {
+                    "text-gray-700 bg-gray-100 rounded-lg dark:bg-gray-800 dark:text-gray-200":
+                      isActive,
+                  },
+                  {
+                    "text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700":
+                      !isActive,
+                  }
+                )
+              }
+              to="users"
+            >
+              <UserGroupIcon className="w-5 h-5 hidden md:block"/>
+
+              <span className="mx-0 md:mx-4 font-medium">Користувачі</span>
             </NavLink>
 
             <hr className="my-6 border-gray-200 dark:border-gray-600" />

@@ -30,6 +30,8 @@ import NewsListPage from "./components/news/list";
 import OrderSummary from "./components/orders/summary";
 import OrdersPage from "./components/orders/list";
 import OrderPage from "./components/orders/order";
+import OrdersList from "./components/admin/orders";
+import UsersList from "./components/admin/users";
 
 function App() {
   return (
@@ -83,6 +85,12 @@ function App() {
               <Route path="edit">
                 <Route path=":id" element={<EditSalePage />} />
               </Route>
+            </Route>
+            <Route path="orders">
+              <Route index element={<OrdersList/>}/>
+            </Route>
+            <Route path="users">
+              <Route index element={<UsersList/>}/>
             </Route>
             <Route path="products">
               <Route index element={<ProductsListPage />} />

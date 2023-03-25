@@ -31,8 +31,6 @@ const OrderSummary = () => {
         });
       }
       dispatch(setCart([]));
-
-      navigator("/orders");
     } catch (error: any) {
       
     }
@@ -40,7 +38,7 @@ const OrderSummary = () => {
 
   useEffect(() => {
     if(cart.length == 0)
-      navigator('/error404');
+      navigator("/orders");
   }, [cart])
   
 

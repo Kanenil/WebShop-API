@@ -32,7 +32,7 @@ namespace ExamWebShop.Controllers
             var payload = await _jwtTokenService.VerifyGoogleToken(googleToken);
 
             if (payload == null)
-                return BadRequest();
+                return BadRequest("Токен авторизації застарілий");
 
             string provider = "Google";
             var info = new UserLoginInfo(provider, payload.Subject, provider);
@@ -49,6 +49,10 @@ namespace ExamWebShop.Controllers
                     return BadRequest();
             }
 
+            var time = await _userManager.GetLockoutEndDateAsync(user);
+            if (time != null)
+                return BadRequest($"Аккаунт заблоковано до {time.ToString()}");
+
             var token = await _jwtTokenService.CreateToken(user);
             return Ok(new { token });
         }
@@ -62,7 +66,7 @@ namespace ExamWebShop.Controllers
             var payload = await _jwtTokenService.VerifyGoogleToken(model.Token);
 
             if (payload == null)
-                return BadRequest();
+                return BadRequest("Токен застарілий");
 
             string provider = "Google";
             var info = new UserLoginInfo(provider, payload.Subject, provider);
@@ -108,11 +112,15 @@ namespace ExamWebShop.Controllers
                 var user = await _userManager.FindByNameAsync(model.Email);
 
                 if (user == null)
-                    return NotFound();
+                    return BadRequest("Не правильно введена електронна пошта або пароль!");
 
 
                 if (!await _userManager.CheckPasswordAsync(user, model.Password))
-                    return BadRequest();
+                    return BadRequest("Не правильно введена електронна пошта або пароль!");
+
+                var time = await _userManager.GetLockoutEndDateAsync(user);
+                if (time != null)
+                    return BadRequest($"Аккаунт заблоковано до {time.ToString()}");
 
                 var token = await _jwtTokenService.CreateToken(user);
                 return Ok(new { token });

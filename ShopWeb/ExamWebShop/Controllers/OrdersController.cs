@@ -1,11 +1,11 @@
 ﻿using ExamWebShop.Constants;
 using ExamWebShop.Interfaces;
-using ExamWebShop.Models.Account;
 using ExamWebShop.Models.Orders;
 using ExamWebShop.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExamWebShop.Controllers
 {
@@ -41,6 +41,33 @@ namespace ExamWebShop.Controllers
                 return NotFound();
 
             return Ok(model);
+        }
+
+        [HttpGet("statuses")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> GetAllOrderStatuses()
+        {
+            var model = await _orderService.OrderStatuses.Select(x=>x.Name).ToListAsync();
+
+            return Ok(model);
+        }
+
+        [HttpGet("all")]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> GetAllOrders([FromQuery] OrderSearchViewModel search)
+        {
+            var model = await _orderService.GetOrdersAsync(search);
+
+            return Ok(model);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = Roles.Admin)]
+        public async Task<IActionResult> ChangeOrderStatus(OrderEditStatusViewModel model)
+        {
+            await _orderService.SetOrderStatus(model.Email, model.Id, model.Name);
+
+            return Ok();
         }
 
         [HttpDelete("cancel/{id}")]

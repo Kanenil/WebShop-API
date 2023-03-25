@@ -1,4 +1,4 @@
-﻿namespace ExamWebShop.Models.Account
+﻿namespace ExamWebShop.Models.Orders
 {
     public class CreateOrderViewModel
     {

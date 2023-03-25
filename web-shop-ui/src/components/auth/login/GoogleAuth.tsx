@@ -9,7 +9,12 @@ import { setUser } from "../AuthReducer";
 import { IBasketResponce, ICartItem } from "../../common/basket/types";
 import { setCart } from "../../common/basket/CartReducer";
 
-export const GoogleAuth = () => {
+interface Props
+{
+  onErrorLogin: (message: string)=>void;
+}
+
+export const GoogleAuth : React.FC<Props>= ({onErrorLogin}) => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
 
@@ -72,7 +77,10 @@ export const GoogleAuth = () => {
         navigator("/");
       })
       .catch((error) => {
-        navigator("/auth/register/finish?token=" + token);
+        if(error.response.data !== 'Токен авторизації застарілий' && !error.response.data.includes('заблоковано'))
+          navigator("/auth/register/finish?token=" + token);
+        else
+          onErrorLogin(error.response.data);
       });
   };
 

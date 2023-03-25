@@ -37,6 +37,7 @@ builder.Services.AddTransient<ICategoriesService, CategoriesService>();
 builder.Services.AddTransient<ISalesService, SalesService>();
 builder.Services.AddTransient<IAccountService, AccountService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IUsersService, UsersService>();
 
 var signinKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<String>("JWTSecretKey")));
 

@@ -47,18 +47,30 @@ const OrderPage = () => {
             </p>
           </div>
 
+          <div className="grid grid-cols-2 gap-x-4">
+          <Link
+            to=".."
+            className="w-full mt-5 flex items-center justify-center bg-indigo-600 py-2 px-2.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-full sm:flex-grow-0"
+          >
+            Назад до всіх замовлень
+          </Link>
+
           {state.orderStatus.toLowerCase() !=
             "знаходиться в місті отримувача" &&
             state.orderStatus.toLowerCase() != "скасовано" && (
               <button
                 type="button"
                 onClick={onCancelClick}
-                className="max-w-xs mt-5 flex items-center justify-center bg-red-700 py-2 px-2.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-full sm:flex-grow-0"
+                className="w-full mt-5 flex items-center justify-center bg-red-700 py-2 px-2.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-full sm:flex-grow-0"
               >
                 Скасувати замовлення
               </button>
             )}
+          </div>
 
+          
+
+          
           <section className="mt-10 border-t border-gray-200 dark:border-gray-600">
             <h2 className="sr-only">Your order</h2>
 

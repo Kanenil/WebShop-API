@@ -14,11 +14,14 @@ import { setCart } from "../../common/basket/CartReducer";
 import { setUser } from "../AuthReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { IAuthUser } from "../types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Alert from "../../common/alert";
 
 const LoginPage = () => {
   const navigator = useNavigate();
   const dispatch = useDispatch();
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const { isAuth } = useSelector(
     (store: any) => store.auth as IAuthUser
@@ -88,7 +91,7 @@ const LoginPage = () => {
 
       navigator("/");
     } catch (error: any) {
-      errors.email = "Не правильно введена електронна пошта або пароль!";
+      errors.email = error.response.data;
     }
   };
 
@@ -112,11 +115,23 @@ const LoginPage = () => {
           className="w-full px-6 py-8 md:px-8 lg:w-1/2"
           onSubmit={handleSubmit}
         >
+          <Alert
+            text={alertMessage}
+            type={"danger"}
+            open={alertOpen}
+            setOpen={setAlertOpen}
+          />
+
           <div className="flex justify-center mx-auto">
             <img className="w-auto h-16" src={logo} alt="" />
           </div>
 
-          <GoogleAuth />
+          <GoogleAuth
+            onErrorLogin={(message) => {
+              setAlertMessage(message);
+              setAlertOpen(true);
+            }}
+          />
 
           <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 lg:w-1/4"></span>
