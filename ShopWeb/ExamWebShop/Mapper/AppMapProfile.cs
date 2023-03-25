@@ -25,6 +25,7 @@ namespace ExamWebShop.Mapper
             CreateMap<CategoryEntity, CategoryMainItemViewModel>()
                 .ForMember(x => x.CountProducts, opt => opt.MapFrom(x => x.Products.Count));
 
+
             CreateMap<ProductEntity, ProductItemViewModel>()
                 .ForMember(x => x.Category, dto => dto.MapFrom(x => x.Category.Name))
                 .ForMember(x => x.Images, dto => dto.MapFrom(x => x.Images.Select(x => x.Name)))

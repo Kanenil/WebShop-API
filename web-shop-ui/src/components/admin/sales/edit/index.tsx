@@ -75,7 +75,7 @@ const EditSalePage = () => {
 
   useEffect(() => {
     http
-      .get<ISaleEdit>("/api/sales/" + id)
+      .get<ISaleEdit>("/api/sales/admin/" + id)
       .then((resp) => {
         const { data } = resp;
         setFieldValue("name", data.name);

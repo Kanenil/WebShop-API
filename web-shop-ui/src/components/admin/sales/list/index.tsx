@@ -26,7 +26,7 @@ const SalesListPage = () => {
 
   useEffect(() => {
     http
-      .get<ISaleResult>("/api/sales", {
+      .get<ISaleResult>("/api/sales/admin", {
         params: search,
       })
       .then((resp) => {

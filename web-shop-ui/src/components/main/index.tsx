@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { ICategoryItem } from "../categories/types";
 import { Link } from "react-router-dom";
 import { APP_ENV } from "../../env";
+import SaleCarousel from "./SaleCarousel";
 
 const MainPage = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
@@ -48,6 +49,11 @@ const MainPage = () => {
   return (
     <>
       <div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+        <div className="mb-6">
+          <SaleCarousel/>
+        </div>
+        
+
         {recentlyProducts.length > 0 && (
           <>
             <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-200">

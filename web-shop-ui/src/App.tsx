@@ -32,6 +32,7 @@ import OrdersPage from "./components/orders/list";
 import OrderPage from "./components/orders/order";
 import OrdersList from "./components/admin/orders";
 import UsersList from "./components/admin/users";
+import SalePage from "./components/sale";
 
 function App() {
   return (
@@ -67,6 +68,9 @@ function App() {
               <Route index element={<OrdersPage/>}/>
               <Route path="make-order" element={<OrderSummary/>}/>
               <Route path=":id" element={<OrderPage />} />
+            </Route>
+            <Route path="sale">
+              <Route path=":id" element={<SalePage/>}/>
             </Route>
             <Route path="*" element={<Error404 />} />
           </Route>
